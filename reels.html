@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>SCORPION X | Reels</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       SCORPION X – REELS.HTML STYLES
+       TikTok Style Vertical Feed
+       ============================================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --gold: #FFD700;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.7);
+      --fire-glow: 0 0 30px rgba(255, 69, 0, 0.3);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.4s ease;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--fire-orange); border-radius: 10px; }
+
+    /* ==================== BACKGROUND ==================== */
+    .bg-fire {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    }
+
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cursor-glow {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 69, 0, 0.2), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+
+    /* ==================== SIDEBAR ==================== */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 45px;
+      height: 45px;
+      background: var(--glass-bg);
+      border: 1px solid var(--fire-orange);
+      border-radius: 12px;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(8px);
+      transition: var(--transition-medium);
+    }
+
+    .hamburger:hover { background: var(--fire-orange); box-shadow: var(--fire-glow); }
+    .hamburger span { width: 25px; height: 3px; background: var(--gold); transition: var(--transition-fast); }
+    .hamburger:hover span { background: var(--black); }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: rgba(5, 10, 20, 0.98);
+      backdrop-filter: blur(20px);
+      border-right: 2px solid var(--fire-orange);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+
+    .sidebar.open { left: 0; }
+    .sidebar .sidebar-logo {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .sidebar .sidebar-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      margin-bottom: 8px;
+    }
+
+    .sidebar .sidebar-logo span {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      color: var(--gold);
+      display: block;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 25px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 69, 0, 0.1);
+      transition: var(--transition-fast);
+    }
+
+    .sidebar a i { width: 25px; color: var(--fire-orange); }
+    .sidebar a:hover { background: rgba(255, 69, 0, 0.1); padding-left: 35px; color: #fff; }
+    .sidebar a.active { color: var(--gold); background: rgba(255, 69, 0, 0.15); border-left: 3px solid var(--fire-orange); }
+
+    /* ==================== REELS CONTAINER ==================== */
+    .reels-container {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      width: 100%;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    .reel {
+      height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      position: relative;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .reel video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .reel .reel-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* ==================== REEL OVERLAY ==================== */
+    .reel-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 80px 20px 20px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent 60%);
+      color: white;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .reel-overlay .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      margin-bottom: 6px;
+    }
+
+    .reel-overlay .user .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fire-orange), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--black);
+      flex-shrink: 0;
+    }
+
+    .reel-overlay .user .name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reel-overlay .user .name .verified {
+      color: #25D366;
+      font-size: 0.7rem;
+    }
+
+    .reel-overlay .caption {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      pointer-events: none;
+      margin-bottom: 4px;
+    }
+
+    .reel-overlay .music {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reel-overlay .music i { color: var(--gold); }
+
+    /* ==================== REEL ACTIONS ==================== */
+    .reel-actions {
+      position: absolute;
+      right: 15px;
+      bottom: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .action-btn {
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: var(--transition-fast);
+      gap: 2px;
+    }
+
+    .action-btn:hover { transform: scale(1.1); background: rgba(255, 69, 0, 0.5); }
+    .action-btn .count {
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .action-btn.liked i { color: #ff3366; }
+    .action-btn.liked .count { color: #ff3366; }
+
+    .action-btn .badge-new {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--fire-orange);
+      color: var(--black);
+      font-size: 0.5rem;
+      padding: 1px 6px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    /* ==================== PROGRESS BAR ==================== */
+    .reel-progress {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 400px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      z-index: 8;
+      overflow: hidden;
+    }
+
+    .reel-progress .fill {
+      height: 100%;
+      background: var(--fire-orange);
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ==================== REEL NUMBER ==================== */
+    .reel-number {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 8;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: var(--font-primary);
+      letter-spacing: 1px;
+    }
+
+    /* ==================== LOADING ==================== */
+    .loading-spinner {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      color: var(--text-secondary);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 20px;
+      border-radius: 30px;
+      backdrop-filter: blur(8px);
+    }
+
+    .loading-spinner.active { display: flex; }
+    .loading-spinner .spinner { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--fire-orange); border-top-color: transparent; animation: spin 0.8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 600px) {
+      .reel-actions { right: 10px; bottom: 80px; gap: 15px; }
+      .action-btn { width: 42px; height: 42px; font-size: 1.2rem; }
+      .action-btn .count { font-size: 0.5rem; }
+      .reel-overlay { padding: 60px 15px 15px; }
+      .reel-overlay .caption { font-size: 0.75rem; }
+    }
+
+    @media (max-width: 400px) {
+      .action-btn { width: 36px; height: 36px; font-size: 1rem; }
+      .reel-actions { gap: 12px; }
+    }
+
+    /* ==================== TOAST ==================== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--fire-orange);
+      border-radius: 12px;
+      padding: 12px 24px;
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.4s ease;
+      text-align: center;
+    }
+
+    .toast.active { display: block; }
+    @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(30px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    .toast .toast-title { font-weight: 700; color: var(--gold); font-size: 0.8rem; }
+    .toast .toast-msg { font-size: 0.7rem; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+
+<div class="bg-fire"></div>
+<canvas id="fireParticles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<div class="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X">
+    <span>SCORPION X</span>
+  </div>
+  <a href="/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/connect.html"><i class="fab fa-whatsapp"></i> Connect WhatsApp</a>
+  <a href="/ban.html"><i class="fas fa-skull"></i> Ban Panel</a>
+  <a href="/unban.html"><i class="fas fa-infinity"></i> Unban Panel</a>
+  <a href="/earn-coins.html"><i class="fas fa-coins"></i> Earn Coins</a>
+  <a href="/reels.html" class="active"><i class="fas fa-photo-video"></i> Reels</a>
+  <a href="/chat.html"><i class="fas fa-comments"></i> Chatroom</a>
+  <a href="/account.html"><i class="fas fa-user-cog"></i> Account</a>
+  <a href="/admin.html"><i class="fas fa-code-branch"></i> Admin</a>
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<!-- ==================== REELS CONTAINER ==================== -->
+<div class="reels-container" id="reelsContainer">
+  <!-- Reels will be dynamically loaded here -->
+</div>
+
+<!-- ==================== LOADING SPINNER ==================== -->
+<div class="loading-spinner" id="loadingSpinner">
+  <div class="spinner"></div>
+  <span>Loading more reels...</span>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">🎬 Reels</div>
+  <div class="toast-msg" id="toastMsg">Scroll for more content!</div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+  // ============================================================
+  // SCORPION X – REELS.JS
+  // TikTok Style Vertical Feed with Multiple APIs
+  // ============================================================
+
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  if (!token) window.location.href = '/login.html';
+
+  // ==================== CONFIGURATION ====================
+  const CONFIG = {
+    // Pexels API (Free – get key from pexels.com/api)
+    PEXELS_KEY: 'YOUR_PEXELS_API_KEY_HERE', // 🔑 Replace with your key
+    // Pixabay API (Free – get key from pixabay.com/api)
+    PIXABAY_KEY: 'YOUR_PIXABAY_API_KEY_HERE',
+    // Use mock videos if no API keys
+    USE_MOCK: true,
+    // Number of videos per page
+    PER_PAGE: 10,
+    // Current page
+    page: 1,
+    // Total videos loaded
+    totalLoaded: 0,
+    // Is loading
+    isLoading: false,
+    // Has more
+    hasMore: true,
+    // Video sources
+    videos: [],
+    // Currently playing video index
+    currentIndex: 0,
+    // Observer for infinite scroll
+    observer: null,
+  };
+
+  // ==================== FIRE PARTICLES ====================
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 2.5 + 1.5,
+      speedX: (Math.random() - 0.5) * 1.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#FF4500', '#FF6600', '#FFD700', '#FF0000', '#FF8C00'][Math.floor(Math.random() * 5)]
+    };
+  }
+
+  for (let i = 0; i < 80; i++) {
+    const p = createParticle();
+    p.y = Math.random() * canvas.height;
+    particles.push(p);
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.shadowColor = '#FF4500';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      if (p.y < -10) {
+        Object.assign(p, createParticle());
+        p.y = canvas.height + 10;
+      }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ==================== CURSOR GLOW ====================
+  const cursorGlow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  });
+  if ('ontouchstart' in window) cursorGlow.style.display = 'none';
+
+  // ==================== SIDEBAR ====================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // ==================== TOAST ====================
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 3000);
+  }
+
+  // ==================== LOGOUT ====================
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+
+  // ==================== API FUNCTIONS ====================
+  async function fetchFromPexels(page) {
+    const url = `https://api.pexels.com/videos/popular?per_page=${CONFIG.PER_PAGE}&page=${page}`;
+    try {
+      const response = await fetch(url, {
+        headers: { 'Authorization': CONFIG.PEXELS_KEY }
+      });
+      if (!response.ok) throw new Error('Pexels API error');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.warn('Pexels API error:', err);
+      return null;
+    }
+  }
+
+  async function fetchFromPixabay(page) {
+    const url = `https://pixabay.com/api/videos/?key=${CONFIG.PIXABAY_KEY}&per_page=${CONFIG.PER_PAGE}&page=${page}&order=popular`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Pixabay API error');
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.warn('Pixabay API error:', err);
+      return null;
+    }
+  }
+
+  // ==================== MOCK VIDEOS ====================
+  function getMockVideos() {
+    const mockData = [
+      { id: 1, url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-woods-826-large.mp4', user: 'nature_lover', caption: 'Peaceful forest stream 🌲', likes: 1234, comments: 89 },
+      { id: 2, url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-breaking-on-the-seashore-1096-large.mp4', user: 'ocean_waves', caption: 'Calming ocean waves 🌊', likes: 2345, comments: 156 },
+      { id: 3, url: 'https://assets.mixkit.co/videos/preview/mixkit-waterfalls-in-the-forest-1257-large.mp4', user: 'adventure_time', caption: 'Hidden waterfall 💦', likes: 3456, comments: 201 },
+      { id: 4, url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-lights-1232-large.mp4', user: 'cyber_girl', caption: 'Neon dreams 🌆', likes: 4567, comments: 312 },
+      { id: 5, url: 'https://assets.mixkit.co/videos/preview/mixkit-mountains-with-sunset-1580-large.mp4', user: 'travel_bug', caption: 'Sunset magic 🌄', likes: 5678, comments: 289 },
+      { id: 6, url: 'https://assets.mixkit.co/videos/preview/mixkit-city-night-traffic-time-lapse-1178-large.mp4', user: 'city_scape', caption: 'City lights at night 🌃', likes: 6789, comments: 401 },
+      { id: 7, url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-in-a-field-of-sunflowers-1256-large.mp4', user: 'sunflower_girl', caption: 'Field of sunflowers 🌻', likes: 7890, comments: 267 },
+      { id: 8, url: 'https://assets.mixkit.co/videos/preview/mixkit-fireworks-celebration-1095-large.mp4', user: 'celebration_time', caption: 'Fireworks celebration 🎆', likes: 8901, comments: 345 },
+      { id: 9, url: 'https://assets.mixkit.co/videos/preview/mixkit-snowy-mountains-at-sunset-1581-large.mp4', user: 'mountain_view', caption: 'Snowy mountains 🏔️', likes: 9012, comments: 412 },
+      { id: 10, url: 'https://assets.mixkit.co/videos/preview/mixkit-drifting-clouds-over-the-mountains-1582-large.mp4', user: 'cloud_watcher', caption: 'Drifting clouds ☁️', likes: 10123, comments: 389 }
+    ];
+    return mockData;
+  }
+
+  // ==================== FETCH VIDEOS ====================
+  async function fetchVideos() {
+    const page = CONFIG.page;
+    let videos = [];
+
+    // Try Pexels first (if key provided)
+    if (CONFIG.PEXELS_KEY && CONFIG.PEXELS_KEY !== 'YOUR_PEXELS_API_KEY_HERE') {
+      const data = await fetchFromPexels(page);
+      if (data && data.videos) {
+        videos = data.videos.map(v => ({
+          id: v.id,
+          url: v.video_files.find(f => f.quality === 'hd' || f.quality === 'sd')?.link || v.video_files[0]?.link,
+          user: v.user?.name || 'Pexels',
+          caption: `${v.width}x${v.height} • ${v.duration}s`,
+          likes: Math.floor(Math.random() * 10000) + 100,
+          comments: Math.floor(Math.random() * 500) + 10,
+          source: 'pexels'
+        }));
+        CONFIG.hasMore = data.page < data.total_results / data.per_page;
+      }
+    }
+
+    // Try Pixabay if no videos from Pexels
+    if (videos.length === 0 && CONFIG.PIXABAY_KEY && CONFIG.PIXABAY_KEY !== 'YOUR_PIXABAY_API_KEY_HERE') {
+      const data = await fetchFromPixabay(page);
+      if (data && data.hits) {
+        videos = data.hits.map(v => ({
+          id: v.id,
+          url: v.videos.large?.url || v.videos.medium?.url || v.videos.small?.url,
+          user: v.user || 'Pixabay',
+          caption: v.tags || 'No description',
+          likes: Math.floor(Math.random() * 8000) + 100,
+          comments: Math.floor(Math.random() * 400) + 10,
+          source: 'pixabay'
+        }));
+        CONFIG.hasMore = videos.length === CONFIG.PER_PAGE;
+      }
+    }
+
+    // Fallback to mock videos
+    if (videos.length === 0 && CONFIG.USE_MOCK) {
+      const mockData = getMockVideos();
+      // Cycle through mock videos with different IDs
+      const offset = (page - 1) * CONFIG.PER_PAGE;
+      videos = mockData.map((v, i) => ({
+        ...v,
+        id: v.id + offset * 10,
+        url: v.url,
+        likes: Math.floor(Math.random() * 10000) + 100,
+        comments: Math.floor(Math.random() * 500) + 10,
+        source: 'mock'
+      }));
+      // Only show 2 pages of mock videos
+      CONFIG.hasMore = page < 2;
+    }
+
+    return videos;
+  }
+
+  // ==================== RENDER REELS ====================
+  function renderReels(videos) {
+    const container = document.getElementById('reelsContainer');
+    const startIndex = CONFIG.totalLoaded;
+
+    videos.forEach((video, index) => {
+      const totalIndex = startIndex + index;
+      const reelDiv = document.createElement('div');
+      reelDiv.className = 'reel';
+      reelDiv.dataset.index = totalIndex;
+      reelDiv.dataset.id = video.id;
+
+      const avatarLetter = (video.user || 'U').charAt(0).toUpperCase();
+
+      reelDiv.innerHTML = `
+        <video src="${video.url}" loop playsinline preload="metadata"></video>
+        <div class="reel-progress"><div class="fill" id="progress-${totalIndex}"></div></div>
+        <div class="reel-number">${totalIndex + 1}</div>
+        <div class="reel-overlay">
+          <div class="user">
+            <div class="avatar">${avatarLetter}</div>
+            <div class="name">@${escapeHtml(video.user || 'Unknown')}</div>
+          </div>
+          <div class="caption">${escapeHtml(video.caption || '')}</div>
+          <div class="music"><i class="fas fa-music"></i> Original Sound</div>
+        </div>
+        <div class="reel-actions">
+          <button class="action-btn like-btn" data-id="${video.id}" onclick="toggleLike(this)">
+            <i class="far fa-heart"></i>
+            <span class="count">${formatNumber(video.likes || 0)}</span>
+          </button>
+          <button class="action-btn" onclick="showToast('💬 Comments', 'Comment section coming soon!')">
+            <i class="far fa-comment"></i>
+            <span class="count">${formatNumber(video.comments || 0)}</span>
+          </button>
+          <button class="action-btn" onclick="shareReel('${video.url}', '${escapeHtml(video.caption)}')">
+            <i class="far fa-share-square"></i>
+          </button>
+        </div>
+      `;
+
+      container.appendChild(reelDiv);
+    });
+
+    CONFIG.totalLoaded += videos.length;
+
+    // Setup video observers
+    setupVideoObservers();
+
+    // Setup scroll observer for infinite scroll
+    setupInfiniteScroll();
+  }
+
+  // ==================== VIDEO OBSERVERS ====================
+  function setupVideoObservers() {
+    const reels = document.querySelectorAll('.reel');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target.querySelector('video');
+        if (!video) return;
+
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+          video.muted = false;
+          // Update progress bar
+          updateProgress(video, entry.target);
+        } else {
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+    }, { threshold: 0.5 });
+
+    reels.forEach(reel => {
+      observer.observe(reel);
+    });
+  }
+
+  function updateProgress(video, reel) {
+    const progressBar = reel.querySelector('.reel-progress .fill');
+    if (!progressBar) return;
+
+    video.addEventListener('timeupdate', () => {
+      if (video.duration) {
+        const percent = (video.currentTime / video.duration) * 100;
+        progressBar.style.width = percent + '%';
+      }
+    });
+
+    video.addEventListener('ended', () => {
+      progressBar.style.width = '0%';
+    });
+  }
+
+  // ==================== INFINITE SCROLL ====================
+  function setupInfiniteScroll() {
+    const container = document.getElementById('reelsContainer');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && CONFIG.hasMore && !CONFIG.isLoading) {
+          loadMoreReels();
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // Observe the last reel
+    const lastReel = container.lastElementChild;
+    if (lastReel) {
+      observer.observe(lastReel);
+    }
+
+    CONFIG.observer = observer;
+  }
+
+  // ==================== LOAD MORE REELS ====================
+  async function loadMoreReels() {
+    if (CONFIG.isLoading || !CONFIG.hasMore) return;
+
+    CONFIG.isLoading = true;
+    const spinner = document.getElementById('loadingSpinner');
+    spinner.classList.add('active');
+
+    CONFIG.page++;
+    const videos = await fetchVideos();
+
+    if (videos && videos.length > 0) {
+      renderReels(videos);
+    } else {
+      CONFIG.hasMore = false;
+    }
+
+    spinner.classList.remove('active');
+    CONFIG.isLoading = false;
+  }
+
+  // ==================== LIKE FUNCTION ====================
+  function toggleLike(btn) {
+    const icon = btn.querySelector('i');
+    const count = btn.querySelector('.count');
+    let currentCount = parseInt(count.textContent.replace(/,/g, '')) || 0;
+
+    if (icon.classList.contains('far')) {
+      icon.classList.remove('far');
+      icon.classList.add('fas');
+      btn.classList.add('liked');
+      count.textContent = formatNumber(currentCount + 1);
+      showToast('❤️ Liked!', 'You liked this reel');
+    } else {
+      icon.classList.remove('fas');
+      icon.classList.add('far');
+      btn.classList.remove('liked');
+      count.textContent = formatNumber(currentCount - 1);
+    }
+  }
+
+  // ==================== SHARE FUNCTION ====================
+  function shareReel(url, caption) {
+    if (navigator.share) {
+      navigator.share({
+        title: 'SCORPION X Reel',
+        text: caption || 'Check out this reel on SCORPION X!',
+        url: url
+      }).catch(() => {});
+    } else {
+      // Fallback
+      navigator.clipboard.writeText(`${caption}\n${url}`).then(() => {
+        showToast('📋 Copied!', 'Reel link copied to clipboard');
+      }).catch(() => {
+        showToast('🔗 Share', `Share this reel!\n${url}`);
+      });
+    }
+  }
+
+  // ==================== FORMAT NUMBER ====================
+  function formatNumber(num) {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num;
+  }
+
+  // ==================== ESCAPE HTML ====================
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      if (m === '"') return '&quot;';
+      return m;
+    });
+  }
+
+  // ==================== KEYBOARD NAVIGATION ====================
+  document.addEventListener('keydown', (e) => {
+    const container = document.getElementById('reelsContainer');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      container.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      container.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+    } else if (e.key === 'l' || e.key === 'L') {
+      // Like shortcut
+      const activeReel = getActiveReel();
+      if (activeReel) {
+        const likeBtn = activeReel.querySelector('.like-btn');
+        if (likeBtn) toggleLike(likeBtn);
+      }
+    }
+  });
+
+  function getActiveReel() {
+    const reels = document.querySelectorAll('.reel');
+    for (let reel of reels) {
+      const rect = reel.getBoundingClientRect();
+      if (rect.top >= 0 && rect.top < window.innerHeight * 0.5) {
+        return reel;
+      }
+    }
+    return null;
+  }
+
+  // ==================== INIT ====================
+  async function init() {
+    // Check if keys are set
+    const hasKeys = (CONFIG.PEXELS_KEY && CONFIG.PEXELS_KEY !== 'YOUR_PEXELS_API_KEY_HERE') ||
+                    (CONFIG.PIXABAY_KEY && CONFIG.PIXABAY_KEY !== 'YOUR_PIXABAY_API_KEY_HERE');
+
+    if (!hasKeys && !CONFIG.USE_MOCK) {
+      document.getElementById('reelsContainer').innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; text-align:center; padding:20px; color:var(--text-secondary);">
+          <i class="fas fa-photo-video" style="font-size:3rem; color:var(--fire-orange); opacity:0.3;"></i>
+          <h2 style="color:var(--gold); margin-top:20px;">No API Keys Found</h2>
+          <p style="max-width:400px;">Get a free API key from Pexels or Pixabay, or enable mock videos.</p>
+          <p style="font-size:0.8rem; margin-top:10px;">Replace <code>YOUR_PEXELS_API_KEY_HERE</code> or <code>YOUR_PIXABAY_API_KEY_HERE</code></p>
+        </div>
+      `;
+      return;
+    }
+
+    // Load first batch
+    const videos = await fetchVideos();
+    if (videos && videos.length > 0) {
+      renderReels(videos);
+      setTimeout(() => showToast('🎬 SCORPION X Reels', 'Scroll for more content!'), 1500);
+    } else {
+      document.getElementById('reelsContainer').innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:center; height:100vh; flex-direction:column; text-align:center; padding:20px; color:var(--text-secondary);">
+          <i class="fas fa-exclamation-triangle" style="font-size:3rem; color:var(--fire-orange);"></i>
+          <h2 style="color:var(--gold); margin-top:20px;">No Videos Available</h2>
+          <p>Check your API keys or internet connection</p>
+        </div>
+      `;
+    }
+  }
+
+  // ==================== START ====================
+  document.addEventListener('DOMContentLoaded', init);
+
+  // ==================== HANDLE VISIBILITY CHANGE ====================
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      // Pause all videos when tab is hidden
+      document.querySelectorAll('.reel video').forEach(v => v.pause());
+    } else {
+      // Resume playing visible videos
+      const reels = document.querySelectorAll('.reel');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const video = entry.target.querySelector('video');
+            if (video) video.play().catch(() => {});
+          }
+        });
+      }, { threshold: 0.5 });
+      reels.forEach(reel => observer.observe(reel));
+    }
+  });
+
+  console.log('🎬 SCORPION X Reels loaded successfully!');
+</script>
+</body>
+</html>
