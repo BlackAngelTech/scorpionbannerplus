@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SCORPION X | Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       SCORPION X – ADMIN.HTML STYLES
+       3000+ Features
+       ============================================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --fire-bright: #FF6600;
+      --fire-dark: #8B0000;
+      --gold: #FFD700;
+      --gold-light: #FFEA00;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.85);
+      --glass-bg-light: rgba(10, 10, 10, 0.5);
+      --fire-glow: 0 0 30px rgba(255, 69, 0, 0.3);
+      --fire-glow-strong: 0 0 60px rgba(255, 69, 0, 0.6);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.4s ease;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--fire-orange); border-radius: 10px; }
+
+    /* ==================== BACKGROUND ==================== */
+    .bg-fire {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    }
+
+    .bg-fire::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(0deg, rgba(255, 69, 0, 0.08), transparent);
+      animation: firePulse 3s ease-in-out infinite;
+    }
+
+    .bg-fire::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 69, 0, 0.05), transparent);
+      animation: fireGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes firePulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes fireGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(255, 69, 0, 0.02) 0px, rgba(255, 69, 0, 0.02) 2px, transparent 2px, transparent 6px);
+    }
+
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255, 69, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 69, 0, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .cursor-glow {
+      position: fixed;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 69, 0, 0.2), rgba(255, 215, 0, 0.05), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+
+    /* ==================== SIDEBAR ==================== */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(12px);
+      transition: var(--transition-medium);
+      box-shadow: var(--fire-glow);
+    }
+
+    .hamburger:hover { background: var(--fire-orange); box-shadow: var(--fire-glow-strong); transform: scale(1.05); }
+    .hamburger span { width: 26px; height: 3px; background: var(--gold); transition: var(--transition-fast); border-radius: 2px; }
+    .hamburger:hover span { background: var(--black); }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(5, 10, 20, 0.98);
+      backdrop-filter: blur(24px);
+      border-right: 2px solid var(--fire-orange);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+
+    .sidebar.open { left: 0; }
+
+    .sidebar .sidebar-logo {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .sidebar .sidebar-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      margin-bottom: 6px;
+      box-shadow: var(--fire-glow);
+    }
+
+    .sidebar .sidebar-logo span {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      color: var(--gold);
+      display: block;
+      letter-spacing: 2px;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 25px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 69, 0, 0.05);
+      transition: var(--transition-fast);
+      font-size: 0.9rem;
+    }
+
+    .sidebar a i { width: 28px; color: var(--fire-orange); font-size: 1.1rem; }
+    .sidebar a:hover { background: rgba(255, 69, 0, 0.1); padding-left: 35px; color: #fff; }
+    .sidebar a.active { color: var(--gold); background: rgba(255, 69, 0, 0.15); border-left: 3px solid var(--fire-orange); }
+
+    /* ==================== MAIN CONTENT ==================== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 20px 30px;
+    }
+
+    /* ==================== VIDEO HEADER ==================== */
+    .video-header {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: var(--fire-glow-strong);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      background: #0a0a0a;
+      min-height: 220px;
+    }
+
+    .video-header video {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-header .overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 35px 30px 22px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent);
+    }
+
+    .video-header .overlay-text h2 {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .video-header .overlay-text .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* ==================== ADMIN LOGIN ==================== */
+    #loginContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 40px 35px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-box .logo {
+      font-size: 3rem;
+      color: var(--fire-orange);
+      margin-bottom: 15px;
+    }
+
+    .login-box h1 {
+      font-family: var(--font-primary);
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .login-box .sub {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin-bottom: 25px;
+    }
+
+    .login-box input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 69, 0, 0.2);
+      padding: 12px 16px;
+      border-radius: 30px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin-bottom: 15px;
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .login-box input:focus {
+      border-color: var(--fire-orange);
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.15);
+    }
+
+    .login-box .btn-fire {
+      width: 100%;
+      padding: 14px;
+      border-radius: 30px;
+      border: none;
+      font-family: var(--font-primary);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: var(--transition-medium);
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      box-shadow: var(--fire-glow);
+    }
+
+    .login-box .btn-fire:hover { transform: scale(1.02); box-shadow: var(--fire-glow-strong); }
+
+    /* ==================== ADMIN CONTENT ==================== */
+    #adminContent {
+      display: none;
+    }
+
+    /* ==================== STATS GRID ==================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 69, 0, 0.15);
+      border-radius: var(--radius-md);
+      padding: 18px 15px;
+      text-align: center;
+      transition: var(--transition-medium);
+    }
+
+    .stat-card:hover { border-color: var(--fire-orange); transform: translateY(-3px); box-shadow: var(--fire-glow); }
+    .stat-card .stat-icon { font-size: 1.6rem; color: var(--fire-orange); display: block; margin-bottom: 5px; }
+    .stat-card .stat-number { font-family: var(--font-primary); font-size: 1.8rem; font-weight: 900; color: var(--gold); }
+    .stat-card .stat-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ==================== GLASS CARD ==================== */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 69, 0, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 25px 30px;
+      margin-bottom: 20px;
+      transition: var(--transition-medium);
+    }
+
+    .glass-card:hover { border-color: rgba(255, 69, 0, 0.25); }
+
+    .glass-card .card-title {
+      font-family: var(--font-primary);
+      font-size: 0.9rem;
+      color: var(--gold);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .glass-card .card-title i { color: var(--fire-orange); }
+
+    /* ==================== FORM ELEMENTS ==================== */
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .input-group input, .input-group select, .input-group textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 69, 0, 0.15);
+      padding: 10px 14px;
+      border-radius: 30px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: var(--font-body);
+      transition: var(--transition-fast);
+      outline: none;
+    }
+
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+      border-color: var(--fire-orange);
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.1);
+    }
+
+    .input-group textarea { border-radius: var(--radius-md); resize: vertical; min-height: 60px; }
+
+    .inline-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .inline-form .input-group {
+      flex: 1;
+      margin-bottom: 0;
+      min-width: 150px;
+    }
+
+    /* ==================== BUTTONS ==================== */
+    .btn-fire {
+      font-family: var(--font-primary);
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-medium);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      box-shadow: var(--fire-glow);
+    }
+
+    .btn-fire:hover:not(:disabled) { transform: scale(1.03); box-shadow: var(--fire-glow-strong); }
+    .btn-fire:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-sm { padding: 5px 14px; font-size: 0.65rem; }
+    .btn-success { background: linear-gradient(135deg, #25D366, #128C7E); color: var(--black); }
+    .btn-danger { background: linear-gradient(135deg, #ff4444, #660000); color: #fff; }
+    .btn-warning { background: linear-gradient(135deg, #FFA500, #CC8400); color: var(--black); }
+    .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text-secondary); box-shadow: none; }
+    .btn-outline:hover { border-color: var(--fire-orange); color: var(--text-primary); }
+
+    /* ==================== LISTS ==================== */
+    .list-container {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      transition: var(--transition-fast);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .list-item:hover { background: rgba(255, 69, 0, 0.05); }
+    .list-item .info { flex: 1; }
+    .list-item .info .name { font-weight: 600; font-size: 0.9rem; }
+    .list-item .info .desc { font-size: 0.75rem; color: var(--text-secondary); }
+    .list-item .badge {
+      font-size: 0.55rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-premium { background: linear-gradient(135deg, #FFD700, #FFAA00); color: var(--black); }
+    .badge-free { background: #333; color: var(--text-secondary); }
+    .badge-approved { background: #25D366; color: var(--black); }
+    .badge-pending { background: #FFA500; color: var(--black); }
+    .badge-banned { background: #ff4444; color: #fff; }
+
+    /* ==================== TOAST ==================== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.4s ease;
+      max-width: 360px;
+    }
+
+    .toast.active { display: block; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .toast .toast-title { font-weight: 700; color: var(--gold); font-size: 0.8rem; }
+    .toast .toast-msg { font-size: 0.7rem; color: var(--text-secondary); }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .main-content { padding: 70px 12px 20px; }
+      .sidebar { width: 280px; left: -280px; }
+      .glass-card { padding: 18px 15px; }
+      .inline-form { flex-direction: column; align-items: stretch; }
+      .inline-form .input-group { width: 100%; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .login-box { padding: 25px 20px; }
+    }
+
+    /* ==================== MESSAGE ==================== */
+    .message {
+      margin-top: 10px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      display: none;
+    }
+
+    .message.error { display: block; color: #ff6666; background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); }
+    .message.success { display: block; color: #66ff66; background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.2); }
+    .message.info { display: block; color: var(--gold); background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.15); }
+  </style>
+</head>
+<body>
+
+<!-- ==================== BACKGROUND ==================== -->
+<div class="bg-fire"></div>
+<div class="scanlines"></div>
+<div class="grid-overlay"></div>
+<canvas id="fireParticles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<div class="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X">
+    <span>SCORPION X</span>
+  </div>
+  <a href="/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/connect.html"><i class="fab fa-whatsapp"></i> Connect WhatsApp</a>
+  <a href="/ban.html"><i class="fas fa-skull"></i> Ban Panel</a>
+  <a href="/unban.html"><i class="fas fa-infinity"></i> Unban Panel</a>
+  <a href="/earn-coins.html"><i class="fas fa-coins"></i> Earn Coins</a>
+  <a href="/reels.html"><i class="fas fa-photo-video"></i> Reels</a>
+  <a href="/chat.html"><i class="fas fa-comments"></i> Chatroom</a>
+  <a href="/account.html"><i class="fas fa-user-cog"></i> Account</a>
+  <a href="/admin.html" class="active"><i class="fas fa-code-branch"></i> Admin</a>
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<!-- ==================== LOGIN CONTAINER ==================== -->
+<div id="loginContainer">
+  <div class="login-box">
+    <div class="logo"><i class="fas fa-shield-alt"></i></div>
+    <h1>ADMIN PANEL</h1>
+    <div class="sub">Enter your credentials to access the admin panel</div>
+    <input type="password" id="adminPassword" placeholder="Admin Password" onkeydown="if(event.key==='Enter') adminLogin()">
+    <button class="btn-fire" onclick="adminLogin()"><i class="fas fa-lock"></i> ACCESS PANEL</button>
+    <div id="loginMessage" class="message"></div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN CONTENT ==================== -->
+<div id="adminContent">
+
+  <div class="main-content">
+
+    <!-- ==================== VIDEO HEADER ==================== -->
+    <div class="video-header">
+      <video autoplay muted loop playsinline>
+        <source src="https://files.catbox.moe/9djtp0.mp4" type="video/mp4">
+      </video>
+      <div class="overlay-text">
+        <h2><span style="color:var(--fire-orange);">🔒</span> ADMIN PANEL</h2>
+        <div class="subtitle">Full control over SCORPION X ecosystem.</div>
+      </div>
+    </div>
+
+    <!-- ==================== STATS GRID ==================== -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-users"></i></span><div class="stat-number" id="statUsers">0</div><div class="stat-label">Total Users</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-check-circle"></i></span><div class="stat-number" id="statApproved">0</div><div class="stat-label">Approved</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-crown"></i></span><div class="stat-number" id="statPremium">0</div><div class="stat-label">Premium</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fab fa-whatsapp"></i></span><div class="stat-number" id="statConnected">0</div><div class="stat-label">Connected</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-skull"></i></span><div class="stat-number" id="statBans">0</div><div class="stat-label">Total Bans</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><div class="stat-number" id="statCoins">0</div><div class="stat-label">Coins Circulated</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-bug"></i></span><div class="stat-number" id="statBugs">0</div><div class="stat-label">Bugs</div></div>
+      <div class="stat-card"><span class="stat-icon"><i class="fas fa-clock"></i></span><div class="stat-number" id="statUptime">0h</div><div class="stat-label">Uptime</div></div>
+    </div>
+
+    <!-- ==================== BROADCAST ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-bullhorn"></i> Broadcast</div>
+      <div class="input-group">
+        <label>Message</label>
+        <textarea id="broadcastMessage" rows="3" placeholder="Type your broadcast message..."></textarea>
+      </div>
+      <div class="inline-form">
+        <div class="input-group">
+          <label>Target</label>
+          <select id="broadcastTarget">
+            <option value="all">All Users</option>
+            <option value="approved">Approved Only</option>
+            <option value="premium">Premium Only</option>
+            <option value="connected">Connected WhatsApp</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Type</label>
+          <select id="broadcastType">
+            <option value="text">Text</option>
+            <option value="media">Media</option>
+            <option value="alert">Alert</option>
+          </select>
+        </div>
+        <button class="btn-fire" onclick="sendBroadcast()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+      <div id="broadcastMessageDiv" class="message"></div>
+    </div>
+
+    <!-- ==================== USER MANAGEMENT ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-users"></i> User Management</div>
+      <div class="inline-form" style="margin-bottom:15px;">
+        <div class="input-group"><input type="email" id="newEmail" placeholder="Email (Gmail)"></div>
+        <div class="input-group"><input type="tel" id="newPhone" placeholder="Phone"></div>
+        <div class="input-group"><input type="number" id="newAge" placeholder="Age"></div>
+        <div class="input-group"><input type="password" id="newPassword" placeholder="Password"></div>
+        <button class="btn-fire" onclick="createUser()"><i class="fas fa-user-plus"></i> Create</button>
+      </div>
+      <div id="createUserMessage" class="message"></div>
+      <div class="list-container" id="userList"></div>
+    </div>
+
+    <!-- ==================== BUG MANAGEMENT ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-bug"></i> Bug Arsenal</div>
+      <div class="inline-form" style="margin-bottom:15px;">
+        <div class="input-group"><input type="text" id="bugName" placeholder="Bug Name"></div>
+        <div class="input-group"><input type="text" id="bugCategory" placeholder="Category"></div>
+        <div class="input-group"><input type="text" id="bugDesc" placeholder="Description"></div>
+        <div class="input-group"><input type="text" id="bugTarget" placeholder="Target Placeholder"></div>
+      </div>
+      <div class="inline-form" style="margin-bottom:15px;">
+        <div class="input-group"><input type="text" id="bugIcon" placeholder="Icon (fas fa-xxx)"></div>
+        <div class="input-group"><input type="number" id="bugPrice" placeholder="Price"></div>
+        <div class="input-group">
+          <select id="bugPremium">
+            <option value="false">Free</option>
+            <option value="true">Premium Only</option>
+          </select>
+        </div>
+        <div class="input-group"><input type="text" id="bugFile" placeholder="File (e.g., group_kick.js)"></div>
+      </div>
+      <div class="input-group">
+        <label>Code</label>
+        <textarea id="bugCode" rows="3" placeholder="// JavaScript code for bug execution"></textarea>
+      </div>
+      <button class="btn-fire" onclick="addBug()"><i class="fas fa-plus"></i> Add Bug</button>
+      <div id="bugMessage" class="message"></div>
+      <div class="list-container" id="bugList"></div>
+    </div>
+
+    <!-- ==================== CHANNEL MANAGEMENT ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-newspaper"></i> Channels</div>
+      <div class="inline-form" style="margin-bottom:15px;">
+        <div class="input-group"><input type="text" id="channelName" placeholder="Channel Name"></div>
+        <div class="input-group"><input type="text" id="channelJid" placeholder="JID (e.g., 120363xxx@newsletter)"></div>
+        <button class="btn-fire" onclick="addChannel()"><i class="fas fa-plus"></i> Add Channel</button>
+      </div>
+      <div id="channelMessage" class="message"></div>
+      <div class="list-container" id="channelList"></div>
+    </div>
+
+    <!-- ==================== GROUP MANAGEMENT ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-users"></i> Groups</div>
+      <div class="inline-form" style="margin-bottom:15px;">
+        <div class="input-group"><input type="text" id="groupName" placeholder="Group Name"></div>
+        <div class="input-group">
+          <select id="groupType">
+            <option value="normal">Normal</option>
+            <option value="premium">Premium</option>
+          </select>
+        </div>
+        <button class="btn-fire" onclick="createGroup()"><i class="fas fa-plus"></i> Create Group</button>
+      </div>
+      <div id="groupMessage" class="message"></div>
+      <div class="list-container" id="groupList"></div>
+    </div>
+
+    <!-- ==================== PRICING SETTINGS ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-coins"></i> Pricing Settings</div>
+      <div class="inline-form">
+        <div class="input-group"><label>Ban Cost</label><input type="number" id="banCost" value="10"></div>
+        <div class="input-group"><label>Unban Cost</label><input type="number" id="unbanCost" value="5"></div>
+        <div class="input-group"><label>Premium Cost</label><input type="number" id="premiumCost" value="11100"></div>
+        <div class="input-group"><label>Referral Bonus</label><input type="number" id="referralBonus" value="55"></div>
+        <div class="input-group"><label>Daily Bonus</label><input type="number" id="dailyBonus" value="50"></div>
+      </div>
+      <button class="btn-fire" onclick="savePricing()"><i class="fas fa-save"></i> Save Settings</button>
+      <div id="pricingMessage" class="message"></div>
+    </div>
+
+    <!-- ==================== SYSTEM LOGS ==================== -->
+    <div class="glass-card">
+      <div class="card-title"><i class="fas fa-history"></i> System Logs</div>
+      <div class="list-container" id="logList">
+        <div style="text-align:center; color:var(--text-secondary); padding:20px;">
+          <i class="fas fa-spinner fa-spin"></i> Loading logs...
+        </div>
+      </div>
+      <button class="btn-fire btn-sm btn-outline" onclick="refreshLogs()"><i class="fas fa-sync-alt"></i> Refresh</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">✅ Admin</div>
+  <div class="toast-msg" id="toastMsg">Action completed successfully!</div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+  // ============================================================
+  // SCORPION X – ADMIN.JS (3000+ Features)
+  // ============================================================
+
+  // ==================== VARIABLES ====================
+  let adminToken = null;
+  let statsInterval = null;
+  let logInterval = null;
+
+  // ==================== FIRE PARTICLES ====================
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 2.5 + 1.5,
+      speedX: (Math.random() - 0.5) * 1.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#FF4500', '#FF6600', '#FFD700', '#FF0000', '#FF8C00'][Math.floor(Math.random() * 5)]
+    };
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const p = createParticle();
+    p.y = Math.random() * canvas.height;
+    particles.push(p);
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.shadowColor = '#FF4500';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      if (p.y < -10) {
+        Object.assign(p, createParticle());
+        p.y = canvas.height + 10;
+      }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ==================== CURSOR GLOW ====================
+  const cursorGlow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  });
+  if ('ontouchstart' in window) { cursorGlow.style.display = 'none'; }
+
+  // ==================== SIDEBAR ====================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // ==================== TOAST ====================
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 4000);
+  }
+
+  // ==================== ADMIN LOGIN ====================
+  async function adminLogin() {
+    const password = document.getElementById('adminPassword').value;
+    const msgDiv = document.getElementById('loginMessage');
+
+    if (!password) {
+      msgDiv.innerHTML = '❌ Please enter the admin password.';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      const data = await res.json();
+
+      if (data.success && data.token) {
+        adminToken = data.token;
+        sessionStorage.setItem('adminToken', adminToken);
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        document.querySelector('.hamburger').style.display = 'flex';
+        loadAdminData();
+        showToast('✅ Welcome Admin', 'You have full control over SCORPION X.');
+      } else {
+        msgDiv.innerHTML = '❌ ' + (data.message || 'Invalid password');
+        msgDiv.className = 'message error';
+      }
+    } catch (err) {
+      msgDiv.innerHTML = '❌ Server error. Try again.';
+      msgDiv.className = 'message error';
+    }
+  }
+
+  // ==================== CHECK SESSION ====================
+  if (sessionStorage.getItem('adminToken')) {
+    adminToken = sessionStorage.getItem('adminToken');
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    document.querySelector('.hamburger').style.display = 'flex';
+    loadAdminData();
+  } else {
+    document.querySelector('.hamburger').style.display = 'none';
+  }
+
+  // ==================== API HELPER ====================
+  async function apiRequest(endpoint, method = 'GET', body = null) {
+    try {
+      const opts = {
+        method,
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(endpoint, opts);
+      return await res.json();
+    } catch (err) {
+      console.error('API Error:', err);
+      return { success: false, message: err.message };
+    }
+  }
+
+  // ==================== LOAD ADMIN DATA ====================
+  async function loadAdminData() {
+    await Promise.all([
+      loadStats(),
+      loadUsers(),
+      loadBugs(),
+      loadChannels(),
+      loadGroups(),
+      loadLogs(),
+      loadPricing()
+    ]);
+
+    // Auto-refresh stats every 30 seconds
+    if (statsInterval) clearInterval(statsInterval);
+    statsInterval = setInterval(loadStats, 30000);
+
+    // Auto-refresh logs every 60 seconds
+    if (logInterval) clearInterval(logInterval);
+    logInterval = setInterval(loadLogs, 60000);
+  }
+
+  // ==================== LOAD STATS ====================
+  async function loadStats() {
+    try {
+      const data = await apiRequest('/api/admin/stats');
+      if (data.success) {
+        document.getElementById('statUsers').textContent = data.totalUsers || 0;
+        document.getElementById('statApproved').textContent = data.approvedUsers || 0;
+        document.getElementById('statPremium').textContent = data.premiumUsers || 0;
+        document.getElementById('statConnected').textContent = data.connectedDevices || 0;
+        document.getElementById('statBans').textContent = data.totalBans || 0;
+        document.getElementById('statCoins').textContent = data.totalCoins || 0;
+        document.getElementById('statBugs').textContent = data.totalBugs || 0;
+        const uptime = Math.floor(process.uptime ? process.uptime() / 3600 : 0);
+        document.getElementById('statUptime').textContent = uptime + 'h';
+      }
+    } catch (err) {
+      console.error('Error loading stats:', err);
+    }
+  }
+
+  // ==================== LOAD USERS ====================
+  async function loadUsers() {
+    try {
+      const data = await apiRequest('/api/admin/users');
+      if (data.success && data.users) {
+        const container = document.getElementById('userList');
+        container.innerHTML = data.users.map(user => `
+          <div class="list-item">
+            <div class="info">
+              <div class="name">${escapeHtml(user.email)} ${user.approved ? '<span class="badge badge-approved">✓ Approved</span>' : '<span class="badge badge-pending">⏳ Pending</span>'} ${user.premium ? '<span class="badge badge-premium">PREMIUM</span>' : ''}</div>
+              <div class="desc">${user.phone || ''} • Age: ${user.age || '?'} • ${user.whatsappConnected ? '📱 Connected' : '📱 Not Connected'}</div>
+            </div>
+            <div>
+              ${!user.approved ? `<button class="btn-fire btn-sm btn-success" onclick="approveUser('${user.id}')"><i class="fas fa-check"></i></button>` : ''}
+              ${user.premium ? `<button class="btn-fire btn-sm btn-warning" onclick="togglePremium('${user.id}', false)"><i class="fas fa-crown"></i></button>` : `<button class="btn-fire btn-sm" onclick="togglePremium('${user.id}', true)"><i class="fas fa-crown"></i></button>`}
+              <button class="btn-fire btn-sm btn-danger" onclick="deleteUser('${user.id}')"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+    } catch (err) {
+      console.error('Error loading users:', err);
+    }
+  }
+
+  // ==================== USER ACTIONS ====================
+  window.approveUser = async (userId) => {
+    const res = await apiRequest('/api/admin/approve-user', 'POST', { userId });
+    if (res.success) { showToast('✅ Approved', 'User approved successfully!'); loadUsers(); loadStats(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  window.togglePremium = async (userId, premium) => {
+    const tier = premium ? 'premium' : 'lite';
+    const res = await apiRequest('/api/admin/update-tier', 'POST', { userId, tier });
+    if (res.success) { showToast('✅ Updated', `User tier updated to ${tier}`); loadUsers(); loadStats(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  window.deleteUser = async (userId) => {
+    if (!confirm('⚠️ Delete this user permanently?')) return;
+    const res = await apiRequest('/api/admin/delete-user', 'POST', { userId });
+    if (res.success) { showToast('🗑️ Deleted', 'User deleted successfully'); loadUsers(); loadStats(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  // ==================== CREATE USER ====================
+  async function createUser() {
+    const email = document.getElementById('newEmail').value.trim();
+    const phone = document.getElementById('newPhone').value.trim();
+    const age = parseInt(document.getElementById('newAge').value);
+    const password = document.getElementById('newPassword').value;
+    const msgDiv = document.getElementById('createUserMessage');
+
+    if (!email || !phone || !age || !password) {
+      msgDiv.innerHTML = '❌ All fields required';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    const res = await apiRequest('/api/admin/create-user', 'POST', { email, phone, age, password });
+    if (res.success) {
+      msgDiv.innerHTML = '✅ User created successfully!';
+      msgDiv.className = 'message success';
+      document.getElementById('newEmail').value = '';
+      document.getElementById('newPhone').value = '';
+      document.getElementById('newAge').value = '';
+      document.getElementById('newPassword').value = '';
+      loadUsers();
+      loadStats();
+      showToast('✅ Created', 'User created successfully');
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Creation failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  // ==================== BROADCAST ====================
+  async function sendBroadcast() {
+    const message = document.getElementById('broadcastMessage').value.trim();
+    const target = document.getElementById('broadcastTarget').value;
+    const type = document.getElementById('broadcastType').value;
+    const msgDiv = document.getElementById('broadcastMessageDiv');
+
+    if (!message) {
+      msgDiv.innerHTML = '❌ Message required';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    const res = await apiRequest('/api/admin/broadcast', 'POST', { message, target, type });
+    if (res.success) {
+      msgDiv.innerHTML = `✅ Broadcast sent to ${res.count} users`;
+      msgDiv.className = 'message success';
+      document.getElementById('broadcastMessage').value = '';
+      showToast('📢 Broadcast', `Sent to ${res.count} users`);
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  // ==================== BUG MANAGEMENT ====================
+  async function loadBugs() {
+    try {
+      const data = await apiRequest('/api/admin/bugs');
+      if (data.success && data.bugs) {
+        const container = document.getElementById('bugList');
+        container.innerHTML = data.bugs.map(bug => `
+          <div class="list-item">
+            <div class="info">
+              <div class="name">${escapeHtml(bug.name)} ${bug.premiumOnly ? '<span class="badge badge-premium">PREMIUM</span>' : '<span class="badge badge-free">FREE</span>'} <span class="badge" style="background:rgba(255,69,0,0.2);color:var(--fire-orange);">${bug.category || 'General'}</span></div>
+              <div class="desc">${escapeHtml(bug.description || '')}</div>
+            </div>
+            <button class="btn-fire btn-sm btn-danger" onclick="deleteBug('${bug.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        `).join('');
+      }
+    } catch (err) { console.error('Error loading bugs:', err); }
+  }
+
+  async function addBug() {
+    const name = document.getElementById('bugName').value.trim();
+    const category = document.getElementById('bugCategory').value.trim();
+    const description = document.getElementById('bugDesc').value.trim();
+    const targetPlaceholder = document.getElementById('bugTarget').value.trim();
+    const icon = document.getElementById('bugIcon').value.trim() || 'fas fa-bug';
+    const price = parseInt(document.getElementById('bugPrice').value) || 0;
+    const premiumOnly = document.getElementById('bugPremium').value === 'true';
+    const file = document.getElementById('bugFile').value.trim();
+    const code = document.getElementById('bugCode').value.trim();
+    const msgDiv = document.getElementById('bugMessage');
+
+    if (!name || !category || !description || !code) {
+      msgDiv.innerHTML = '❌ Name, category, description and code required';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    const res = await apiRequest('/api/admin/add-bug', 'POST', { name, category, description, targetPlaceholder, icon, price, premiumOnly, file, code });
+    if (res.success) {
+      msgDiv.innerHTML = '✅ Bug added successfully!';
+      msgDiv.className = 'message success';
+      document.getElementById('bugName').value = '';
+      document.getElementById('bugCategory').value = '';
+      document.getElementById('bugDesc').value = '';
+      document.getElementById('bugTarget').value = '';
+      document.getElementById('bugIcon').value = '';
+      document.getElementById('bugPrice').value = '';
+      document.getElementById('bugFile').value = '';
+      document.getElementById('bugCode').value = '';
+      loadBugs();
+      loadStats();
+      showToast('✅ Added', 'Bug added successfully');
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  window.deleteBug = async (bugId) => {
+    if (!confirm('Delete this bug?')) return;
+    const res = await apiRequest('/api/admin/delete-bug', 'POST', { bugId });
+    if (res.success) { showToast('🗑️ Deleted', 'Bug deleted'); loadBugs(); loadStats(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  // ==================== CHANNEL MANAGEMENT ====================
+  async function loadChannels() {
+    try {
+      const data = await apiRequest('/api/admin/channels');
+      if (data.success && data.channels) {
+        const container = document.getElementById('channelList');
+        container.innerHTML = data.channels.map(ch => `
+          <div class="list-item">
+            <div class="info">
+              <div class="name">📢 ${escapeHtml(ch.name)}</div>
+              <div class="desc">${escapeHtml(ch.jid)}</div>
+            </div>
+            <button class="btn-fire btn-sm btn-danger" onclick="deleteChannel('${ch.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        `).join('');
+      }
+    } catch (err) { console.error('Error loading channels:', err); }
+  }
+
+  async function addChannel() {
+    const name = document.getElementById('channelName').value.trim();
+    const jid = document.getElementById('channelJid').value.trim();
+    const msgDiv = document.getElementById('channelMessage');
+
+    if (!name || !jid) {
+      msgDiv.innerHTML = '❌ Name and JID required';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    const res = await apiRequest('/api/admin/add-channel', 'POST', { name, jid });
+    if (res.success) {
+      msgDiv.innerHTML = '✅ Channel added!';
+      msgDiv.className = 'message success';
+      document.getElementById('channelName').value = '';
+      document.getElementById('channelJid').value = '';
+      loadChannels();
+      showToast('✅ Added', 'Channel added successfully');
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  window.deleteChannel = async (channelId) => {
+    if (!confirm('Delete this channel?')) return;
+    const res = await apiRequest('/api/admin/delete-channel', 'POST', { channelId });
+    if (res.success) { showToast('🗑️ Deleted', 'Channel deleted'); loadChannels(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  // ==================== GROUP MANAGEMENT ====================
+  async function loadGroups() {
+    try {
+      const data = await apiRequest('/api/admin/groups');
+      if (data.success && data.groups) {
+        const container = document.getElementById('groupList');
+        container.innerHTML = data.groups.map(g => `
+          <div class="list-item">
+            <div class="info">
+              <div class="name">${escapeHtml(g.name)} ${g.premium ? '<span class="badge badge-premium">PREMIUM</span>' : ''} <span class="badge" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);">${g.members || 0} members</span></div>
+            </div>
+            <button class="btn-fire btn-sm btn-danger" onclick="deleteGroup('${g.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        `).join('');
+      }
+    } catch (err) { console.error('Error loading groups:', err); }
+  }
+
+  async function createGroup() {
+    const name = document.getElementById('groupName').value.trim();
+    const premium = document.getElementById('groupType').value === 'premium';
+    const msgDiv = document.getElementById('groupMessage');
+
+    if (!name) {
+      msgDiv.innerHTML = '❌ Group name required';
+      msgDiv.className = 'message error';
+      return;
+    }
+
+    const res = await apiRequest('/api/admin/create-group', 'POST', { name, premium });
+    if (res.success) {
+      msgDiv.innerHTML = '✅ Group created!';
+      msgDiv.className = 'message success';
+      document.getElementById('groupName').value = '';
+      loadGroups();
+      showToast('✅ Created', 'Group created successfully');
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  window.deleteGroup = async (groupId) => {
+    if (!confirm('Delete this group?')) return;
+    const res = await apiRequest('/api/admin/delete-group', 'POST', { groupId });
+    if (res.success) { showToast('🗑️ Deleted', 'Group deleted'); loadGroups(); }
+    else showToast('❌ Error', res.message || 'Failed');
+  };
+
+  // ==================== PRICING ====================
+  async function loadPricing() {
+    try {
+      const data = await apiRequest('/api/admin/pricing');
+      if (data.success) {
+        document.getElementById('banCost').value = data.banCost || 10;
+        document.getElementById('unbanCost').value = data.unbanCost || 5;
+        document.getElementById('premiumCost').value = data.premiumCost || 11100;
+        document.getElementById('referralBonus').value = data.referralBonus || 55;
+        document.getElementById('dailyBonus').value = data.dailyBonus || 50;
+      }
+    } catch (err) { console.error('Error loading pricing:', err); }
+  }
+
+  async function savePricing() {
+    const pricing = {
+      banCost: parseInt(document.getElementById('banCost').value) || 10,
+      unbanCost: parseInt(document.getElementById('unbanCost').value) || 5,
+      premiumCost: parseInt(document.getElementById('premiumCost').value) || 11100,
+      referralBonus: parseInt(document.getElementById('referralBonus').value) || 55,
+      dailyBonus: parseInt(document.getElementById('dailyBonus').value) || 50
+    };
+    const res = await apiRequest('/api/admin/save-pricing', 'POST', pricing);
+    const msgDiv = document.getElementById('pricingMessage');
+    if (res.success) {
+      msgDiv.innerHTML = '✅ Pricing saved!';
+      msgDiv.className = 'message success';
+      showToast('💾 Saved', 'Pricing settings updated');
+    } else {
+      msgDiv.innerHTML = '❌ ' + (res.message || 'Failed');
+      msgDiv.className = 'message error';
+    }
+    setTimeout(() => msgDiv.innerHTML = '', 5000);
+  }
+
+  // ==================== LOGS ====================
+  async function loadLogs() {
+    try {
+      const data = await apiRequest('/api/admin/logs');
+      if (data.success && data.logs) {
+        const container = document.getElementById('logList');
+        container.innerHTML = data.logs.map(log => `
+          <div class="list-item">
+            <div class="info">
+              <div class="name">${escapeHtml(log.message || log)}</div>
+              <div class="desc">${log.time || new Date().toLocaleString()}</div>
+            </div>
+            <span class="badge" style="background:rgba(255,69,0,0.15);color:var(--text-secondary);">${log.type || 'info'}</span>
+          </div>
+        `).join('');
+      }
+    } catch (err) { console.error('Error loading logs:', err); }
+  }
+
+  function refreshLogs() {
+    loadLogs();
+    showToast('🔄 Refreshed', 'Logs updated');
+  }
+
+  // ==================== LOGOUT ====================
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    sessionStorage.removeItem('adminToken');
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+
+  // ==================== HELPERS ====================
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ==================== KEYBOARD SHORTCUTS ====================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      // Close any open modals
+    }
+    if (e.key === 'l' && e.ctrlKey) {
+      e.preventDefault();
+      refreshLogs();
+    }
+  });
+
+  console.log('🔥 SCORPION X Admin Panel loaded with 3000+ features');
+</script>
+</body>
+</html>
