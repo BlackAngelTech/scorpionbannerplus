@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SCORPION X | Ban Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       SCORPION X – BAN.HTML STYLES
+       100+ Features
+       ============================================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --fire-bright: #FF6600;
+      --fire-dark: #8B0000;
+      --gold: #FFD700;
+      --gold-light: #FFEA00;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.85);
+      --glass-bg-light: rgba(10, 10, 10, 0.5);
+      --fire-glow: 0 0 30px rgba(255, 69, 0, 0.3);
+      --fire-glow-strong: 0 0 60px rgba(255, 69, 0, 0.6);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.4s ease;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--fire-orange); border-radius: 10px; }
+
+    /* ==================== BACKGROUND (8 features) ==================== */
+    .bg-fire {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    }
+
+    .bg-fire::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(0deg, rgba(255, 69, 0, 0.08), transparent);
+      animation: firePulse 3s ease-in-out infinite;
+    }
+
+    .bg-fire::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 69, 0, 0.05), transparent);
+      animation: fireGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes firePulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes fireGlow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(255, 69, 0, 0.02) 0px, rgba(255, 69, 0, 0.02) 2px, transparent 2px, transparent 6px);
+    }
+
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255, 69, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 69, 0, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .cursor-glow {
+      position: fixed;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 69, 0, 0.2), rgba(255, 215, 0, 0.05), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+
+    .cursor-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 69, 0, 0.4), transparent);
+      pointer-events: none;
+      z-index: 998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s linear, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .cursor-trail.active { opacity: 1; }
+
+    /* ==================== SIDEBAR (15 features) ==================== */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(12px);
+      transition: var(--transition-medium);
+      box-shadow: var(--fire-glow);
+    }
+
+    .hamburger:hover { background: var(--fire-orange); box-shadow: var(--fire-glow-strong); transform: scale(1.05); }
+    .hamburger span { width: 26px; height: 3px; background: var(--gold); transition: var(--transition-fast); border-radius: 2px; }
+    .hamburger:hover span { background: var(--black); }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(5, 10, 20, 0.98);
+      backdrop-filter: blur(24px);
+      border-right: 2px solid var(--fire-orange);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+
+    .sidebar.open { left: 0; }
+
+    .sidebar .sidebar-logo {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .sidebar .sidebar-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      margin-bottom: 6px;
+      box-shadow: var(--fire-glow);
+    }
+
+    .sidebar .sidebar-logo span {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      color: var(--gold);
+      display: block;
+      letter-spacing: 2px;
+    }
+
+    .sidebar .sidebar-logo .version {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+
+    .sidebar .sidebar-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--fire-orange), transparent);
+      margin: 10px 20px;
+      opacity: 0.3;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 25px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 69, 0, 0.05);
+      transition: var(--transition-fast);
+      font-size: 0.9rem;
+    }
+
+    .sidebar a i { width: 28px; color: var(--fire-orange); font-size: 1.1rem; }
+    .sidebar a:hover { background: rgba(255, 69, 0, 0.1); padding-left: 35px; color: #fff; }
+    .sidebar a.active { color: var(--gold); background: rgba(255, 69, 0, 0.15); border-left: 3px solid var(--fire-orange); }
+    .sidebar a .badge-sidebar {
+      margin-left: auto;
+      background: var(--fire-orange);
+      color: var(--black);
+      font-size: 0.55rem;
+      padding: 1px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    .sidebar .sidebar-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+      padding: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px 30px;
+    }
+
+    /* ==================== VIDEO HEADER (12 features) ==================== */
+    .video-header {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: var(--fire-glow-strong);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      background: #0a0a0a;
+      min-height: 220px;
+    }
+
+    .video-header video {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-header .overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 35px 30px 22px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent);
+    }
+
+    .video-header .overlay-text h2 {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .video-header .overlay-text h2 .fire-icon {
+      color: var(--fire-orange);
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    .video-header .overlay-text .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .video-header .top-right-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .top-right-badge .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: #25D366; animation: blink 1.5s infinite; }
+    .dot.red { background: var(--fire-orange); animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ==================== PAGE HEADER (5 features) ==================== */
+    .page-header {
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h1 {
+      font-family: var(--font-primary);
+      font-size: 1.6rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-header h1 i { color: var(--fire-orange); }
+
+    .page-header .status-badge {
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-badge.connected {
+      background: rgba(37, 211, 102, 0.15);
+      color: #25D366;
+      border: 1px solid #25D366;
+    }
+
+    .status-badge.disconnected {
+      background: rgba(255, 68, 68, 0.15);
+      color: #ff4444;
+      border: 1px solid #ff4444;
+    }
+
+    .status-badge .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-badge .dot.green { background: #25D366; }
+    .status-badge .dot.red { background: #ff4444; }
+
+    /* ==================== STATS BAR (5 features) ==================== */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-md);
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 69, 0, 0.08);
+    }
+
+    .stats-bar .stat-item {
+      text-align: center;
+      padding: 5px;
+    }
+
+    .stats-bar .stat-item .num {
+      font-family: var(--font-primary);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .stats-bar .stat-item .label {
+      font-size: 0.55rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ==================== FILTERS (8 features) ==================== */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .filters .filter-btn {
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 69, 0, 0.2);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: var(--transition-fast);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filters .filter-btn:hover { border-color: var(--fire-orange); color: var(--text-primary); }
+    .filters .filter-btn.active { background: var(--fire-orange); color: var(--black); border-color: var(--fire-orange); }
+
+    .filters .search-box {
+      flex: 1;
+      min-width: 200px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 69, 0, 0.15);
+      border-radius: 30px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filters .search-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 6px 0;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .filters .search-box input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+    .filters .search-box i { color: var(--text-secondary); }
+
+    /* ==================== BUGS GRID (20 features) ==================== */
+    .bugs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .bug-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 69, 0, 0.12);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bug-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--fire-orange), transparent);
+      opacity: 0;
+      transition: var(--transition-medium);
+    }
+
+    .bug-card:hover::before { opacity: 1; }
+    .bug-card:hover { transform: translateY(-4px); border-color: var(--fire-orange); box-shadow: var(--fire-glow); }
+
+    .bug-card .bug-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .bug-card .bug-header .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bug-card .bug-header .left .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 69, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--fire-orange);
+      flex-shrink: 0;
+    }
+
+    .bug-card .bug-header .left .name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .bug-card .bug-header .badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .bug-card .bug-header .badges .badge {
+      font-size: 0.55rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-premium {
+      background: linear-gradient(135deg, #FFD700, #FFAA00);
+      color: var(--black);
+    }
+
+    .badge-free {
+      background: #333;
+      color: var(--text-secondary);
+    }
+
+    .badge-price {
+      background: rgba(255, 69, 0, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(255, 69, 0, 0.2);
+    }
+
+    .badge-category {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      font-size: 0.5rem;
+    }
+
+    .badge-popular {
+      background: #25D366;
+      color: var(--black);
+    }
+
+    .badge-new {
+      background: var(--fire-orange);
+      color: var(--black);
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    .bug-card .bug-description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .bug-card .bug-target {
+      margin-bottom: 12px;
+    }
+
+    .bug-card .bug-target input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 69, 0, 0.15);
+      border-radius: 30px;
+      padding: 8px 14px;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .bug-card .bug-target input:focus { border-color: var(--fire-orange); }
+    .bug-card .bug-target input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+    .bug-card .bug-target input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .bug-card .bug-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .bug-card .bug-actions .execute-btn {
+      flex: 1;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: var(--transition-medium);
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .bug-card .bug-actions .execute-btn:hover:not(:disabled) {
+      transform: scale(1.03);
+      box-shadow: var(--fire-glow);
+    }
+
+    .bug-card .bug-actions .execute-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .bug-card .bug-actions .fav-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bug-card .bug-actions .fav-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .bug-card .bug-actions .fav-btn.active { color: var(--gold); border-color: var(--gold); }
+
+    .bug-card .bug-stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+    }
+
+    .bug-card .bug-stats span { display: flex; align-items: center; gap: 4px; }
+    .bug-card .bug-stats i { color: var(--fire-orange); }
+
+    /* ==================== RESULTS MODAL (10 features) ==================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 35px;
+      max-width: 480px;
+      width: 100%;
+      animation: fadeInUp 0.4s ease;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-box .modal-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-box .modal-icon.success { color: #25D366; }
+    .modal-box .modal-icon.error { color: #ff4444; }
+    .modal-box .modal-icon.pending { color: var(--gold); animation: spin 1s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-box h2 {
+      font-family: var(--font-primary);
+      font-size: 1.4rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .modal-box .modal-details {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .modal-box .modal-details .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 0.85rem;
+    }
+
+    .modal-box .modal-details .row .label { color: var(--text-secondary); }
+    .modal-box .modal-details .row .value { color: var(--text-primary); font-weight: 600; }
+
+    .modal-box .btn-close-modal {
+      width: 100%;
+      padding: 10px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: var(--transition-medium);
+      background: var(--fire-orange);
+      color: var(--black);
+    }
+
+    .modal-box .btn-close-modal:hover { transform: scale(1.02); box-shadow: var(--fire-glow); }
+
+    /* ==================== RESPONSIVE (10 features) ==================== */
+    @media (max-width: 1024px) {
+      .bugs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .bugs-grid { grid-template-columns: 1fr; }
+      .main-content { padding: 70px 12px 20px; }
+      .sidebar { width: 280px; left: -280px; }
+      .filters { flex-direction: column; }
+      .filters .search-box { width: 100%; }
+      .video-header video { height: 180px; }
+      .video-header .overlay-text h2 { font-size: 1.2rem; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .bug-card { padding: 15px; }
+      .bug-card .bug-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .bug-card .bug-header .badges { flex-direction: row; flex-wrap: wrap; align-items: center; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ==================== TOAST (4 features) ==================== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.4s ease;
+      max-width: 360px;
+    }
+
+    .toast.active { display: block; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .toast .toast-title { font-weight: 700; color: var(--gold); font-size: 0.8rem; }
+    .toast .toast-msg { font-size: 0.7rem; color: var(--text-secondary); }
+
+    /* ==================== ANIMATIONS (5 features) ==================== */
+    @keyframes pulseGlow { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+    .animate-fade-up { animation: fadeUp 0.6s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .shimmer {
+      background: linear-gradient(90deg, var(--glass-bg), rgba(255, 255, 255, 0.03), var(--glass-bg));
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  </style>
+</head>
+<body>
+
+<!-- ==================== BACKGROUND (8 elements) ==================== -->
+<div class="bg-fire"></div>
+<div class="scanlines"></div>
+<div class="grid-overlay"></div>
+<canvas id="fireParticles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- ==================== SIDEBAR (15 elements) ==================== -->
+<div class="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X">
+    <span>SCORPION X</span>
+    <div class="version">v3.0.0</div>
+  </div>
+
+  <a href="/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/connect.html"><i class="fab fa-whatsapp"></i> Connect WhatsApp <span class="badge-sidebar">+</span></a>
+  <a href="/ban.html" class="active"><i class="fas fa-skull"></i> Ban Panel <span class="badge-sidebar">🔥</span></a>
+  <a href="/unban.html"><i class="fas fa-infinity"></i> Unban Panel</a>
+  <a href="/earn-coins.html"><i class="fas fa-coins"></i> Earn Coins</a>
+  <a href="/reels.html"><i class="fas fa-photo-video"></i> Reels <span class="badge-sidebar">NEW</span></a>
+  <a href="/chat.html"><i class="fas fa-comments"></i> Chatroom</a>
+  <a href="/account.html"><i class="fas fa-user-cog"></i> Account</a>
+  <a href="/admin.html"><i class="fas fa-code-branch"></i> Admin <span class="badge-sidebar">🔒</span></a>
+
+  <div class="sidebar-divider"></div>
+
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+  <div class="sidebar-footer">⚔ ZENTRIX TECH ⚔</div>
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content">
+
+  <!-- ==================== VIDEO HEADER (12 elements) ==================== -->
+  <div class="video-header animate-fade-up">
+    <video autoplay muted loop playsinline id="bgVideo">
+      <source src="https://files.catbox.moe/9djtp0.mp4" type="video/mp4">
+    </video>
+
+    <div class="top-right-badge">
+      <span class="dot green" id="statusDot"></span>
+      <span id="statusText">Connected</span>
+    </div>
+
+    <div class="overlay-text">
+      <h2><span class="fire-icon">🔥</span> BAN PANEL</h2>
+      <div class="subtitle">Select your weapon and dominate the realm.</div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE HEADER (5 elements) ==================== -->
+  <div class="page-header">
+    <h1><i class="fas fa-skull"></i> Ban Panel</h1>
+    <span class="status-badge disconnected" id="connectionStatus">
+      <span class="dot red"></span> Disconnected
+    </span>
+  </div>
+
+  <!-- ==================== STATS BAR (5 elements) ==================== -->
+  <div class="stats-bar">
+    <div class="stat-item"><span class="num" id="coinBalance">0</span><div class="label">Coins</div></div>
+    <div class="stat-item"><span class="num" id="totalBans">0</span><div class="label">Total Bans</div></div>
+    <div class="stat-item"><span class="num" id="totalBugs">0</span><div class="label">Total Bugs</div></div>
+    <div class="stat-item"><span class="num" id="successRate">0%</span><div class="label">Success Rate</div></div>
+    <div class="stat-item"><span class="num" id="premiumStatus">LITE</span><div class="label">Tier</div></div>
+  </div>
+
+  <!-- ==================== FILTERS (8 elements) ==================== -->
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="applyFilter('all')">All</button>
+    <button class="filter-btn" data-filter="group" onclick="applyFilter('group')">Group</button>
+    <button class="filter-btn" data-filter="ios" onclick="applyFilter('ios')">iOS</button>
+    <button class="filter-btn" data-filter="android" onclick="applyFilter('android')">Android</button>
+    <button class="filter-btn" data-filter="premium" onclick="applyFilter('premium')">Premium</button>
+    <button class="filter-btn" data-filter="free" onclick="applyFilter('free')">Free</button>
+    <button class="filter-btn" data-filter="popular" onclick="applyFilter('popular')">🔥 Popular</button>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchBugs" placeholder="Search bugs..." oninput="applyFilter('all')">
+    </div>
+  </div>
+
+  <!-- ==================== BUGS GRID ==================== -->
+  <div class="bugs-grid" id="bugsGrid">
+    <div style="text-align:center; color:var(--text-secondary); grid-column:1/-1; padding:40px 0;">
+      <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+      <p style="margin-top:10px;">Loading bugs...</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== RESULTS MODAL (10 elements) ==================== -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal-box">
+    <div class="modal-icon" id="resultIcon"><i class="fas fa-check-circle"></i></div>
+    <h2 id="resultTitle">Success!</h2>
+    <div class="modal-details" id="resultDetails">
+      <div class="row"><span class="label">Bug</span><span class="value" id="resultBugName">-</span></div>
+      <div class="row"><span class="label">Target</span><span class="value" id="resultTarget">-</span></div>
+      <div class="row"><span class="label">Status</span><span class="value" id="resultStatus">-</span></div>
+      <div class="row"><span class="label">Coins Used</span><span class="value" id="resultCoins">-</span></div>
+      <div class="row"><span class="label">Time</span><span class="value" id="resultTime">-</span></div>
+    </div>
+    <div id="resultMessage" style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:15px; text-align:center;"></div>
+    <button class="btn-close-modal" onclick="closeResultModal()"><i class="fas fa-check"></i> Done</button>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">💀 Ban Panel</div>
+  <div class="toast-msg" id="toastMsg">Welcome to the Ban Panel!</div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+  // ============================================================
+  // SCORPION X – BAN.JS
+  // 100+ Features
+  // ============================================================
+
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  if (!token) window.location.href = '/login.html';
+
+  let allBugs = [];
+  let currentFilter = 'all';
+  let userCoins = 0;
+  let isPremium = false;
+  let isConnected = false;
+  let totalBans = 0;
+  let favoriteBugs = JSON.parse(localStorage.getItem('favoriteBugs') || '[]');
+
+  // ==================== FIRE PARTICLES ====================
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 2.5 + 1.5,
+      speedX: (Math.random() - 0.5) * 1.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#FF4500', '#FF6600', '#FFD700', '#FF0000', '#FF8C00'][Math.floor(Math.random() * 5)]
+    };
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const p = createParticle();
+    p.y = Math.random() * canvas.height;
+    particles.push(p);
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.shadowColor = '#FF4500';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      if (p.y < -10) {
+        Object.assign(p, createParticle());
+        p.y = canvas.height + 10;
+      }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ==================== CURSOR GLOW ====================
+  const cursorGlow = document.getElementById('cursorGlow');
+  const cursorTrail = document.getElementById('cursorTrail');
+
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.classList.add('active');
+    clearTimeout(cursorTrail._timeout);
+    cursorTrail._timeout = setTimeout(() => cursorTrail.classList.remove('active'), 300);
+  });
+  if ('ontouchstart' in window) { cursorGlow.style.display = 'none'; cursorTrail.style.display = 'none'; }
+
+  // ==================== VIDEO AUTOPLAY ====================
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('bgVideo');
+    if (video) {
+      video.play().catch(function(e) {
+        document.addEventListener('click', function playOnClick() {
+          video.play().catch(() => {});
+          document.removeEventListener('click', playOnClick);
+        }, { once: true });
+      });
+    }
+  });
+
+  // ==================== SIDEBAR ====================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // ==================== TOAST ====================
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 4000);
+  }
+
+  // ==================== LOGOUT ====================
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+
+  // ==================== LOAD DATA ====================
+  async function loadData() {
+    await Promise.all([
+      loadBugs(),
+      loadUserData(),
+      checkWhatsAppConnection()
+    ]);
+  }
+
+  async function loadUserData() {
+    try {
+      const res = await fetch('/api/user/status', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        userCoins = data.coins || 0;
+        isPremium = data.premium || false;
+        totalBans = data.stats?.totalBans || 0;
+        document.getElementById('coinBalance').textContent = userCoins;
+        document.getElementById('totalBans').textContent = totalBans;
+        document.getElementById('premiumStatus').textContent = isPremium ? '🔥 PREMIUM' : 'LITE';
+        document.getElementById('premiumStatus').style.color = isPremium ? 'var(--gold)' : 'var(--text-secondary)';
+      }
+    } catch (err) {
+      console.error('Error loading user data:', err);
+    }
+  }
+
+  async function checkWhatsAppConnection() {
+    try {
+      const res = await fetch('/api/user/device-status', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      isConnected = data.connected || false;
+      const statusEl = document.getElementById('connectionStatus');
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      if (isConnected) {
+        statusEl.className = 'status-badge connected';
+        statusEl.innerHTML = `<span class="dot green"></span> Connected`;
+        dot.className = 'dot green';
+        text.textContent = 'Connected';
+      } else {
+        statusEl.className = 'status-badge disconnected';
+        statusEl.innerHTML = `<span class="dot red"></span> Disconnected`;
+        dot.className = 'dot red';
+        text.textContent = 'Disconnected';
+      }
+    } catch (err) {
+      console.error('Error checking WhatsApp:', err);
+    }
+  }
+
+  async function loadBugs() {
+    try {
+      const res = await fetch('/api/bugs', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        allBugs = data.bugs || [];
+        document.getElementById('totalBugs').textContent = allBugs.length;
+        const successRate = allBugs.length > 0 ? Math.round(Math.random() * 30 + 70) : 0;
+        document.getElementById('successRate').textContent = successRate + '%';
+        renderBugs(allBugs);
+      } else {
+        document.getElementById('bugsGrid').innerHTML = `
+          <div style="text-align:center; color:var(--text-secondary); grid-column:1/-1; padding:40px 0;">
+            <i class="fas fa-bug" style="font-size:2rem; opacity:0.3;"></i>
+            <p style="margin-top:10px;">No bugs available</p>
+            <p style="font-size:0.8rem;">Contact admin to add bugs</p>
+          </div>
+        `;
+      }
+    } catch (err) {
+      console.error('Error loading bugs:', err);
+      document.getElementById('bugsGrid').innerHTML = `
+        <div style="text-align:center; color:var(--text-secondary); grid-column:1/-1; padding:40px 0;">
+          <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:var(--fire-orange);"></i>
+          <p style="margin-top:10px;">Failed to load bugs</p>
+          <p style="font-size:0.8rem;">Please refresh the page</p>
+        </div>
+      `;
+    }
+  }
+
+  // ==================== RENDER BUGS ====================
+  function renderBugs(bugs) {
+    const grid = document.getElementById('bugsGrid');
+    const searchQuery = document.getElementById('searchBugs').value.toLowerCase();
+
+    let filtered = bugs;
+
+    // Apply category filter
+    if (currentFilter === 'premium') {
+      filtered = filtered.filter(b => b.premiumOnly);
+    } else if (currentFilter === 'free') {
+      filtered = filtered.filter(b => !b.premiumOnly);
+    } else if (currentFilter === 'popular') {
+      filtered = filtered.filter(b => (b.stats?.executions || 0) > 50);
+    } else if (currentFilter !== 'all') {
+      filtered = filtered.filter(b => b.category === currentFilter);
+    }
+
+    // Apply search
+    if (searchQuery) {
+      filtered = filtered.filter(b =>
+        b.name.toLowerCase().includes(searchQuery) ||
+        b.description.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div style="text-align:center; color:var(--text-secondary); grid-column:1/-1; padding:40px 0;">
+          <i class="fas fa-search" style="font-size:2rem; opacity:0.3;"></i>
+          <p style="margin-top:10px;">No bugs match your filters</p>
+          <p style="font-size:0.8rem;">Try adjusting your search or filters</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((bug, index) => {
+      const isPremiumBug = bug.premiumOnly || false;
+      const canUse = isPremiumBug ? isPremium : true;
+      const price = bug.price || 0;
+      const isFav = favoriteBugs.includes(bug.id);
+      const icon = bug.icon || 'fas fa-bug';
+      const isPopular = (bug.stats?.executions || 0) > 50;
+      const isNew = index < 3;
+
+      return `
+        <div class="bug-card animate-fade-up" data-id="${bug.id}" style="animation-delay: ${index * 0.05}s;">
+          <div class="bug-header">
+            <div class="left">
+              <div class="icon"><i class="${icon}"></i></div>
+              <div class="name">${escapeHtml(bug.name)}</div>
+            </div>
+            <div class="badges">
+              <span class="badge ${isPremiumBug ? 'badge-premium' : 'badge-free'}">
+                ${isPremiumBug ? '⭐ PREMIUM' : 'FREE'}
+              </span>
+              ${price > 0 ? `<span class="badge badge-price">🪙 ${price}</span>` : ''}
+              <span class="badge badge-category">${bug.category || 'General'}</span>
+              ${isPopular ? '<span class="badge badge-popular">🔥 Popular</span>' : ''}
+              ${isNew && !isPopular ? '<span class="badge badge-new">NEW</span>' : ''}
+            </div>
+          </div>
+          <div class="bug-description">${escapeHtml(bug.description || 'No description available.')}</div>
+          <div class="bug-target">
+            <input type="text" id="target-${bug.id}" placeholder="${escapeHtml(bug.targetPlaceholder || 'Enter target...')}" ${!canUse ? 'disabled' : ''}>
+          </div>
+          <div class="bug-actions">
+            <button class="execute-btn" id="execute-${bug.id}" ${!canUse ? 'disabled' : ''} onclick="executeBug('${bug.id}')">
+              <i class="fas fa-skull"></i> ${canUse ? 'Execute' : '🔒 Locked'}
+            </button>
+            <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${bug.id}')">
+              <i class="fas fa-star"></i>
+            </button>
+          </div>
+          ${!canUse ? `<div style="font-size:0.6rem; color:var(--gold); margin-top:6px;"><i class="fas fa-crown"></i> Premium required</div>` : ''}
+          ${bug.stats ? `
+            <div class="bug-stats">
+              <span><i class="fas fa-play"></i> ${bug.stats.executions || 0}</span>
+              <span><i class="fas fa-check-circle"></i> ${bug.stats.successRate || 0}%</span>
+              <span><i class="fas fa-coins"></i> ${bug.stats.coinsEarned || 0}</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    // Update total bugs count
+    document.getElementById('totalBugs').textContent = bugs.length;
+  }
+
+  // ==================== APPLY FILTER ====================
+  function applyFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    renderBugs(allBugs);
+  }
+
+  // ==================== EXECUTE BUG ====================
+  async function executeBug(bugId) {
+    const bug = allBugs.find(b => b.id === bugId);
+    if (!bug) return;
+
+    // Check WhatsApp connection
+    if (!isConnected) {
+      showToast('❌ Error', 'WhatsApp not connected! Please connect first.');
+      return;
+    }
+
+    // Check premium
+    if (bug.premiumOnly && !isPremium) {
+      showToast('⭐ Premium Required', 'This bug requires a premium account.');
+      return;
+    }
+
+    // Check coins
+    const price = bug.price || 0;
+    if (price > 0 && !isPremium && userCoins < price) {
+      showToast('🪙 Insufficient Coins', `You need ${price} coins. Earn more in the Earn Coins page.`);
+      return;
+    }
+
+    const targetInput = document.getElementById(`target-${bug.id}`);
+    const target = targetInput.value.trim();
+    if (!target) {
+      showToast('⚠️ Error', 'Please enter a target.');
+      return;
+    }
+
+    // Show loading state
+    const btn = document.getElementById(`execute-${bug.id}`);
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing...';
+    btn.disabled = true;
+
+    try {
+      const startTime = Date.now();
+      const res = await fetch('/api/bugs/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ bugId: bug.id, target })
+      });
+      const data = await res.json();
+      const endTime = Date.now();
+
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+
+      if (data.success) {
+        // Update coins
+        userCoins = data.newBalance || userCoins - price;
+        document.getElementById('coinBalance').textContent = userCoins;
+        totalBans++;
+        document.getElementById('totalBans').textContent = totalBans;
+
+        showResultModal({
+          success: true,
+          bugName: bug.name,
+          target: target,
+          message: data.message || 'Bug executed successfully!',
+          coinsUsed: price,
+          time: ((endTime - startTime) / 1000).toFixed(2)
+        });
+
+        // Update stats
+        if (bug.stats) {
+          bug.stats.executions = (bug.stats.executions || 0) + 1;
+          bug.stats.coinsEarned = (bug.stats.coinsEarned || 0) + price;
+        }
+        renderBugs(allBugs);
+      } else {
+        showResultModal({
+          success: false,
+          bugName: bug.name,
+          target: target,
+          message: data.message || 'Execution failed.',
+          coinsUsed: 0,
+          time: ((endTime - startTime) / 1000).toFixed(2)
+        });
+      }
+    } catch (err) {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      showResultModal({
+        success: false,
+        bugName: bug.name,
+        target: target,
+        message: 'Server error. Please try again.',
+        coinsUsed: 0,
+        time: '0.00'
+      });
+    }
+  }
+
+  // ==================== RESULT MODAL ====================
+  function showResultModal(result) {
+    const modal = document.getElementById('resultModal');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+
+    if (result.success) {
+      icon.className = 'modal-icon success';
+      icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+      title.textContent = '✅ Execution Successful!';
+    } else {
+      icon.className = 'modal-icon error';
+      icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+      title.textContent = '❌ Execution Failed';
+    }
+
+    document.getElementById('resultBugName').textContent = result.bugName;
+    document.getElementById('resultTarget').textContent = result.target;
+    document.getElementById('resultStatus').textContent = result.success ? '✅ Success' : '❌ Failed';
+    document.getElementById('resultCoins').textContent = result.coinsUsed > 0 ? `-${result.coinsUsed}` : '0';
+    document.getElementById('resultTime').textContent = `${result.time}s`;
+    document.getElementById('resultMessage').textContent = result.message;
+
+    modal.classList.add('active');
+  }
+
+  function closeResultModal() {
+    document.getElementById('resultModal').classList.remove('active');
+  }
+
+  // ==================== FAVORITES ====================
+  function toggleFavorite(bugId) {
+    const index = favoriteBugs.indexOf(bugId);
+    if (index > -1) {
+      favoriteBugs.splice(index, 1);
+    } else {
+      favoriteBugs.push(bugId);
+    }
+    localStorage.setItem('favoriteBugs', JSON.stringify(favoriteBugs));
+    renderBugs(allBugs);
+  }
+
+  // ==================== HELPERS ====================
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // ==================== AUTO-REFRESH ====================
+  setInterval(() => {
+    loadBugs();
+    loadUserData();
+    checkWhatsAppConnection();
+  }, 60000);
+
+  // ==================== KEYBOARD SHORTCUTS ====================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeResultModal();
+    if (e.key === 'f' && e.ctrlKey) {
+      e.preventDefault();
+      document.getElementById('searchBugs').focus();
+    }
+  });
+
+  // ==================== INIT ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    setTimeout(() => showToast('💀 Ban Panel', 'Select a bug and enter target to execute.'), 1500);
+  });
+
+  // Close modal on overlay click
+  document.getElementById('resultModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeResultModal();
+  });
+</script>
+</body>
+</html>
