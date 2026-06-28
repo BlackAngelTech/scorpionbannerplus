@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SCORPION X | Enter the Realm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       SCORPION X – INDEX.HTML STYLES
+       Theme: Fire / Mortal Kombat / Dark Cyberpunk
+       ============================================================ */
+
+    /* ==================== RESET & BASE ==================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --fire-bright: #FF6600;
+      --fire-dark: #8B0000;
+      --gold: #FFD700;
+      --gold-light: #FFEA00;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.65);
+      --fire-glow: 0 0 30px rgba(255, 69, 0, 0.4);
+      --fire-glow-strong: 0 0 60px rgba(255, 69, 0, 0.8);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ==================== SCROLLBAR ==================== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--black);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--fire-orange);
+      border-radius: 10px;
+    }
+
+    /* ==================== INTRO VIDEO ==================== */
+    #introVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+      object-fit: cover;
+      display: block;
+      transition: opacity 1.5s ease;
+      cursor: pointer;
+    }
+
+    .skip-hint {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1001;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: var(--font-primary);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      animation: pulseText 2s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    #mainContent {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 2s ease;
+    }
+
+    #mainContent.visible {
+      opacity: 1;
+    }
+
+    /* ==================== BACKGROUND VIDEO ==================== */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      object-fit: cover;
+      opacity: 0.5;
+    }
+
+    .overlay-dark {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ==================== FIRE PARTICLES ==================== */
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* ==================== CURSOR GLOW ==================== */
+    .cursor-glow {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 69, 0, 0.3), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+
+    /* ==================== NAVBAR ==================== */
+    .navbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 1100px;
+      padding: 12px 25px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      border-radius: 60px;
+      box-shadow: var(--fire-glow);
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      object-fit: cover;
+    }
+
+    .navbar .logo-text {
+      font-family: var(--font-primary);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+
+    .navbar .nav-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .navbar .nav-btn {
+      font-family: var(--font-body);
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition-fast);
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar .nav-btn:hover {
+      background: rgba(255, 69, 0, 0.2);
+      border-color: var(--fire-orange);
+    }
+
+    .navbar .nav-btn.btn-fire {
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      border: none;
+      box-shadow: var(--fire-glow);
+    }
+
+    .navbar .nav-btn.btn-fire:hover {
+      transform: scale(1.05);
+      box-shadow: var(--fire-glow-strong);
+    }
+
+    /* ==================== HERO ==================== */
+    .hero {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 800px;
+      animation: fadeInUp 1.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero .logo-big {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--fire-orange);
+      box-shadow: var(--fire-glow-strong);
+      margin-bottom: 20px;
+      object-fit: cover;
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 20px rgba(255, 69, 0, 0.4); }
+      100% { box-shadow: 0 0 60px rgba(255, 69, 0, 0.9); }
+    }
+
+    .hero h1 {
+      font-family: var(--font-primary);
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--fire-orange), var(--gold), var(--fire-orange));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: fireGradient 3s ease infinite;
+      text-shadow: 0 0 40px rgba(255, 69, 0, 0.3);
+      letter-spacing: 4px;
+    }
+
+    @keyframes fireGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .hero .subtitle {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 8px;
+      text-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+      letter-spacing: 6px;
+      animation: glitchText 2.5s infinite;
+    }
+
+    @keyframes glitchText {
+      0%, 100% { text-shadow: 2px 0 var(--fire-orange), -2px 0 var(--gold); }
+      50% { text-shadow: -2px 0 var(--fire-orange), 2px 0 var(--gold); }
+    }
+
+    .hero .description {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 69, 0, 0.3);
+      border-radius: 20px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .hero .description .highlight {
+      color: var(--fire-orange);
+      font-weight: 700;
+      text-shadow: 0 0 15px rgba(255, 69, 0, 0.4);
+    }
+
+    .hero .description .realm-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(255, 69, 0, 0.4);
+    }
+
+    /* ==================== FEATURES GRID ==================== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      max-width: 700px;
+      margin: 20px auto 0;
+      width: 100%;
+    }
+
+    .feature-card {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 69, 0, 0.2);
+      border-radius: 16px;
+      padding: 15px 20px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--fire-orange);
+      box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+      transform: translateY(-3px);
+    }
+
+    .feature-card i {
+      font-size: 1.8rem;
+      color: var(--fire-orange);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .feature-card h4 {
+      color: var(--gold);
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: var(--font-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+    }
+
+    /* ==================== CTA BUTTONS ==================== */
+    .cta-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-fire {
+      font-family: var(--font-primary);
+      padding: 14px 35px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      box-shadow: var(--fire-glow);
+    }
+
+    .btn-fire:hover {
+      transform: scale(1.05);
+      box-shadow: var(--fire-glow-strong);
+    }
+
+    .btn-fire-outline {
+      background: transparent;
+      border: 2px solid var(--fire-orange);
+      color: var(--gold);
+      box-shadow: none;
+    }
+
+    .btn-fire-outline:hover {
+      background: rgba(255, 69, 0, 0.2);
+      transform: scale(1.05);
+      box-shadow: var(--fire-glow);
+    }
+
+    /* ==================== CREDITS ==================== */
+    .credits {
+      position: fixed;
+      bottom: 15px;
+      right: 20px;
+      z-index: 50;
+      font-family: var(--font-primary);
+      font-size: 0.6rem;
+      color: rgba(255, 69, 0, 0.3);
+      letter-spacing: 2px;
+      text-align: right;
+    }
+
+    .credits .eye {
+      color: var(--fire-orange);
+      animation: eyeGlow 2s infinite alternate;
+    }
+
+    @keyframes eyeGlow {
+      0% { text-shadow: 0 0 5px var(--fire-orange); }
+      100% { text-shadow: 0 0 20px var(--fire-orange); }
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 10px 15px;
+        width: 95%;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .navbar .logo-text {
+        font-size: 1rem;
+      }
+
+      .navbar .nav-btn {
+        padding: 5px 12px;
+        font-size: 0.7rem;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero .subtitle {
+        font-size: 1rem;
+        letter-spacing: 3px;
+      }
+
+      .hero .description {
+        font-size: 0.9rem;
+        padding: 15px 20px;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .btn-fire {
+        padding: 10px 22px;
+        font-size: 0.8rem;
+      }
+
+      .hero .logo-big {
+        width: 80px;
+        height: 80px;
+      }
+
+      .credits {
+        font-size: 0.5rem;
+        bottom: 10px;
+        right: 15px;
+      }
+
+      .skip-hint {
+        font-size: 0.6rem;
+        bottom: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .feature-card {
+        padding: 10px 12px;
+      }
+
+      .feature-card i {
+        font-size: 1.2rem;
+      }
+
+      .feature-card h4 {
+        font-size: 0.7rem;
+      }
+
+      .feature-card p {
+        font-size: 0.6rem;
+      }
+
+      .cta-buttons {
+        gap: 10px;
+      }
+
+      .btn-fire {
+        padding: 8px 16px;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ======== INTRO VIDEO (WITH SOUND) ======== -->
+<video id="introVideo" autoplay>
+  <source src="https://files.catbox.moe/om7rb1.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<div class="skip-hint">⚡ TAP TO SKIP ⚡</div>
+
+<!-- ======== BACKGROUND VIDEO (loops, no sound) ======== -->
+<video id="bgVideo" loop muted playsinline>
+  <source src="https://files.catbox.moe/9djtp0.mp4" type="video/mp4">
+</video>
+
+<!-- ======== BACKGROUND AUDIO (50% volume, loops) ======== -->
+<audio id="bgAudio" loop>
+  <source src="https://files.catbox.moe/llfnt2.m4a" type="audio/mp4">
+</audio>
+
+<!-- ======== OVERLAY ======== -->
+<div class="overlay-dark"></div>
+
+<!-- ======== FIRE PARTICLES ======== -->
+<canvas id="fireParticles"></canvas>
+
+<!-- ======== CURSOR GLOW ======== -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ======== MAIN CONTENT ======== -->
+<div id="mainContent">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X Logo">
+      <span class="logo-text">SCORPION X</span>
+    </div>
+    <div class="nav-buttons">
+      <a href="/login.html" class="nav-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <a href="/register.html" class="nav-btn btn-fire"><i class="fas fa-user-plus"></i> Register</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X" class="logo-big">
+
+    <h1>SCORPION X</h1>
+    <div class="subtitle">⚔ GET OVER HERE ⚔</div>
+
+    <div class="description">
+      <p>
+        <span class="highlight">SCORPION X</span> is the ultimate <span class="highlight">WhatsApp</span> automation platform.
+        <br>Dominate. Conquer. Rule the Realm.
+        <br><br>
+        <span class="realm-text">🔥 "There is no mercy in this realm." 🔥</span>
+        <br><br>
+        <span style="font-size: 0.9rem;">
+          Built for those who seek power over the digital realm.
+          <br>Crash groups. Silence enemies. Rule the void.
+        </span>
+      </p>
+    </div>
+
+    <!-- Features -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <i class="fas fa-skull"></i>
+        <h4>Group Crash</h4>
+        <p>Destroy any group</p>
+      </div>
+      <div class="feature-card">
+        <i class="fab fa-apple"></i>
+        <h4>iOS Kill</h4>
+        <p>Crash iOS devices</p>
+      </div>
+      <div class="feature-card">
+        <i class="fab fa-android"></i>
+        <h4>Android Nuke</h4>
+        <p>Crash Android phones</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-bolt"></i>
+        <h4>Zero Trace</h4>
+        <p>Untraceable attacks</p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-buttons">
+      <a href="/login.html" class="btn-fire"><i class="fas fa-fire"></i> Enter the Realm</a>
+      <a href="/register.html" class="btn-fire btn-fire-outline"><i class="fas fa-skull"></i> Join the Fight</a>
+    </div>
+  </div>
+</div>
+
+<!-- ======== CREDITS ======== -->
+<div class="credits">
+  <span class="eye">👁️</span> MADE BY BLEEDING-EYES <span class="eye">👁️</span>
+</div>
+
+<!-- ======== SCRIPTS ======== -->
+<script>
+  // ============================================================
+  // SCORPION X – INDEX.JS
+  // ============================================================
+
+  // ==================== INTRO VIDEO CONTROL ====================
+  const introVideo = document.getElementById('introVideo');
+  const mainContent = document.getElementById('mainContent');
+  const bgVideo = document.getElementById('bgVideo');
+  const bgAudio = document.getElementById('bgAudio');
+  let introSkipped = false;
+
+  function fadeToMainContent() {
+    if (introSkipped) return;
+    introSkipped = true;
+
+    // Fade out intro video
+    introVideo.style.opacity = '0';
+
+    // Show main content
+    mainContent.style.display = 'flex';
+
+    // Start background video
+    bgVideo.play().catch(() => {});
+
+    // Start background audio at 50% volume
+    bgAudio.volume = 0.5;
+    bgAudio.play().catch(() => {});
+
+    // Fade in main content
+    setTimeout(() => {
+      mainContent.classList.add('visible');
+    }, 100);
+
+    // Remove intro video from DOM
+    setTimeout(() => {
+      introVideo.style.display = 'none';
+    }, 1800);
+  }
+
+  // Video ended
+  introVideo.addEventListener('ended', fadeToMainContent);
+
+  // Click to skip
+  introVideo.addEventListener('click', fadeToMainContent);
+
+  // Keyboard skip (Space / Enter)
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === ' ' || e.key === 'Enter') && !introSkipped) {
+      e.preventDefault();
+      fadeToMainContent();
+    }
+  });
+
+  // Fallback: show content after 30 seconds
+  setTimeout(() => {
+    if (!introSkipped) fadeToMainContent();
+  }, 30000);
+
+  // ==================== FIRE PARTICLES ====================
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 4 + 2,
+      speedY: Math.random() * 3 + 2,
+      speedX: (Math.random() - 0.5) * 1.5,
+      opacity: Math.random() * 0.8 + 0.2,
+      color: ['#FF4500', '#FF6600', '#FFD700', '#FF0000', '#FF8C00'][Math.floor(Math.random() * 5)]
+    };
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const p = createParticle();
+    p.y = Math.random() * canvas.height;
+    particles.push(p);
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.shadowColor = '#FF4500';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      if (p.y < -10) {
+        Object.assign(p, createParticle());
+        p.y = canvas.height + 10;
+      }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ==================== CURSOR GLOW ====================
+  const cursorGlow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+  });
+
+  // Hide cursor glow on touch devices
+  if ('ontouchstart' in window) {
+    cursorGlow.style.display = 'none';
+  }
+
+  console.log('🔥 SCORPION X – Welcome to the Realm!');
+</script>
+</body>
+</html>
