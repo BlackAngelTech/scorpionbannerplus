@@ -1,0 +1,134 @@
+# ============================================================
+# SCORPION X – .gitignore
+# Files and folders to exclude from version control
+# ============================================================
+
+# ==================== DEPENDENCIES ====================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ==================== ENVIRONMENT ====================
+.env
+.env.local
+.env.*.local
+*.env
+*.env.local
+
+# ==================== DATA & STORAGE ====================
+data/
+uploads/
+chat_media/
+auth_info_baileys/
+qr_sessions/
+*.json
+!package.json
+!package-lock.json
+!data/.gitkeep
+!uploads/.gitkeep
+!chat_media/.gitkeep
+!auth_info_baileys/.gitkeep
+
+# ==================== SESSIONS ====================
+*.session
+*_session/
+*.auth
+*.creds
+*.crd
+*.key
+
+# ==================== LOGS ====================
+logs/
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pm2-*.log
+
+# ==================== OS FILES ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+._*
+*.swp
+*.swo
+*~
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.sublime-*
+*.code-workspace
+*.code-search
+
+# ==================== BUILD & DIST ====================
+dist/
+build/
+out/
+*.min.js
+*.min.css
+*.map
+*.tsbuildinfo
+
+# ==================== TEST & COVERAGE ====================
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+*.test.ts
+*.spec.ts
+
+# ==================== TEMP FILES ====================
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+*.backup
+*.bak
+
+# ==================== DEPLOYMENT ====================
+.vercel/
+.netlify/
+.aws/
+.azure/
+.cloud/
+.render/
+*.deploy
+
+# ==================== CONTAINERS ====================
+*.pid
+*.seed
+*.pid.lock
+.Dockerfile*
+!.dockerignore
+docker-compose.override.yml
+
+# ==================== MISC ====================
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.der
+*.csr
+.htaccess
+.htpasswd
+*.sqlite
+*.db
+*.sqlite3
