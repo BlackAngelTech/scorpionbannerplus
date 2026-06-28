@@ -1,0 +1,92 @@
+# ============================================================
+# SCORPION X – Render Configuration
+# Deploy to Render with one click
+# ============================================================
+
+services:
+  # ==================== MAIN WEB SERVICE ====================
+  - type: web
+    name: scorpion-x
+    runtime: node
+    plan: starter
+    region: frankfurt  # Change to your preferred region (ohio, virginia, frankfurt, singapore, oregon)
+    
+    # ==================== BUILD & START ====================
+    buildCommand: |
+      npm install --omit=dev
+      npm install --omit=dev
+    startCommand: node index.js
+    
+    # ==================== ENVIRONMENT VARIABLES ====================
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        value: ZentrixTechOfficial
+      - key: PEXELS_API_KEY
+        sync: false  # User must set this in Render dashboard
+      - key: PIXABAY_API_KEY
+        sync: false  # User must set this in Render dashboard
+      - key: ALLOWED_ORIGINS
+        value: https://scorpion-x.onrender.com,https://scorpionbannerplus.onrender.com
+    
+    # ==================== HEALTH CHECK ====================
+    healthCheckPath: /
+    
+    # ==================== AUTO-SCALING ====================
+    numInstances: 1
+    
+    # ==================== PERSISTENT DISK ====================
+    disk:
+      name: scorpion-x-data
+      mountPath: /app/data
+      sizeGB: 1
+
+  # ==================== WEBSOCKET SERVICE (Optional) ====================
+  # Uncomment if you want WebSocket on a separate service
+  # - type: web
+  #   name: scorpion-x-websocket
+  #   runtime: node
+  #   plan: starter
+  #   region: frankfurt
+  #   buildCommand: npm install --omit=dev
+  #   startCommand: node websocket.js
+  #   envVars:
+  #     - key: NODE_ENV
+  #       value: production
+  #     - key: WS_PORT
+  #       value: 3001
+  #     - key: JWT_SECRET
+  #       generateValue: true
+  #     - key: WS_STANDALONE
+  #       value: true
+  #   healthCheckPath: /health
+
+  # ==================== PAIRING SERVICE (Optional) ====================
+  # Uncomment if you want pairing on a separate service
+  # - type: web
+  #   name: scorpion-x-pair
+  #   runtime: node
+  #   plan: starter
+  #   region: frankfurt
+  #   buildCommand: npm install --omit=dev
+  #   startCommand: node pair.js
+  #   envVars:
+  #     - key: NODE_ENV
+  #       value: production
+  #     - key: PAIR_PORT
+  #       value: 8000
+  #     - key: JWT_SECRET
+  #       generateValue: true
+
+# ==================== DATABASE (PostgreSQL - Optional) ====================
+# Uncomment if you want to use PostgreSQL instead of JSON files
+# databases:
+#   - name: scorpion-x-db
+#     databaseName: scorpion_x
+#     user: scorpion_x_user
+#     plan: starter
