@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SCORPION X | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ============================================================
+       SCORPION X – ULTIMATE DASHBOARD
+       ============================================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --fire-bright: #FF6600;
+      --fire-dark: #8B0000;
+      --gold: #FFD700;
+      --gold-light: #FFEA00;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.85);
+      --glass-bg-light: rgba(10, 10, 10, 0.5);
+      --fire-glow: 0 0 30px rgba(255, 69, 0, 0.3);
+      --fire-glow-strong: 0 0 60px rgba(255, 69, 0, 0.6);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+      --transition-fast: 0.2s ease;
+      --transition-medium: 0.4s ease;
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--fire-orange); border-radius: 10px; }
+
+    /* ==================== BACKGROUND ==================== */
+    .bg-fire {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    }
+    .bg-fire::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(0deg, rgba(255,69,0,0.08), transparent);
+      animation: firePulse 3s ease-in-out infinite;
+    }
+    .bg-fire::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,69,0,0.05), transparent);
+      animation: fireGlow 4s ease-in-out infinite;
+    }
+    @keyframes firePulse { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+    @keyframes fireGlow { 0%,100% { opacity:0.3; } 50% { opacity:0.8; } }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(255,69,0,0.02) 0px, rgba(255,69,0,0.02) 2px, transparent 2px, transparent 6px);
+    }
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,69,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,69,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .cursor-glow {
+      position: fixed;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.2), rgba(255,215,0,0.05), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+    .cursor-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.4), transparent);
+      pointer-events: none;
+      z-index: 998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s linear, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .cursor-trail.active { opacity: 1; }
+
+    /* ==================== SIDEBAR ==================== */
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(12px);
+      transition: var(--transition-medium);
+      box-shadow: var(--fire-glow);
+    }
+    .hamburger:hover { background: var(--fire-orange); box-shadow: var(--fire-glow-strong); transform: scale(1.05); }
+    .hamburger span { width: 26px; height: 3px; background: var(--gold); transition: var(--transition-fast); border-radius: 2px; }
+    .hamburger:hover span { background: var(--black); }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(5, 10, 20, 0.98);
+      backdrop-filter: blur(24px);
+      border-right: 2px solid var(--fire-orange);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+    .sidebar.open { left: 0; }
+
+    .sidebar .sidebar-logo {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+    .sidebar .sidebar-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      margin-bottom: 6px;
+      box-shadow: var(--fire-glow);
+    }
+    .sidebar .sidebar-logo span {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      color: var(--gold);
+      display: block;
+      letter-spacing: 2px;
+    }
+    .sidebar .sidebar-logo .version {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+    .sidebar .sidebar-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--fire-orange), transparent);
+      margin: 10px 20px;
+      opacity: 0.3;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 25px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,69,0,0.05);
+      transition: var(--transition-fast);
+      font-size: 0.9rem;
+    }
+    .sidebar a i { width: 28px; color: var(--fire-orange); font-size: 1.1rem; }
+    .sidebar a:hover { background: rgba(255,69,0,0.1); padding-left: 35px; color: #fff; }
+    .sidebar a.active { color: var(--gold); background: rgba(255,69,0,0.15); border-left: 3px solid var(--fire-orange); }
+    .sidebar .sidebar-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+      padding: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px 30px;
+    }
+
+    /* ==================== VIDEO HEADER ==================== */
+    .video-header {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: var(--fire-glow-strong);
+      border: 1px solid rgba(255,69,0,0.3);
+      background: #0a0a0a;
+      min-height: 220px;
+    }
+    .video-header video {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+    .video-header .overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 35px 30px 22px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+    }
+    .video-header .overlay-text h2 {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .video-header .overlay-text h2 .fire-icon { color: var(--fire-orange); animation: pulseGlow 2s infinite alternate; }
+    .video-header .overlay-text .subtitle { color: var(--text-secondary); font-size: 0.9rem; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+
+    .video-header .top-right-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,69,0,0.3);
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+    }
+    .top-right-badge .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: #25D366; animation: blink 1.5s infinite; }
+    .dot.red { background: var(--fire-orange); animation: blink 1.5s infinite; }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* ==================== PAGE HEADER ==================== */
+    .page-header {
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .page-header h1 {
+      font-family: var(--font-primary);
+      font-size: 1.6rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-header h1 i { color: var(--fire-orange); }
+
+    /* ==================== WELCOME CARD ==================== */
+    .welcome-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,69,0,0.15);
+      border-radius: var(--radius-lg);
+      padding: 30px 35px;
+      margin-bottom: 25px;
+      transition: var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.05), transparent);
+      pointer-events: none;
+    }
+    .welcome-card h2 {
+      font-family: var(--font-primary);
+      font-size: 2rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .welcome-card h2 .greeting {
+      color: var(--text-primary);
+    }
+    .welcome-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    .welcome-card .status-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .status-badge.online { background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid #25D366; }
+    .status-badge.offline { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
+
+    /* ==================== STATS GRID ==================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,69,0,0.15);
+      border-radius: var(--radius-md);
+      padding: 18px 15px;
+      text-align: center;
+      transition: var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--fire-orange), transparent);
+      opacity: 0;
+      transition: var(--transition-medium);
+    }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card:hover { border-color: var(--fire-orange); transform: translateY(-3px); box-shadow: var(--fire-glow); }
+    .stat-card .stat-icon { font-size: 1.6rem; color: var(--fire-orange); display: block; margin-bottom: 5px; }
+    .stat-card .stat-number { font-family: var(--font-primary); font-size: 1.8rem; font-weight: 900; color: var(--gold); }
+    .stat-card .stat-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-card .stat-change {
+      font-size: 0.55rem;
+      margin-top: 4px;
+      display: inline-block;
+      padding: 1px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .stat-card .stat-change.up { color: #25D366; background: rgba(37,211,102,0.1); }
+    .stat-card .stat-change.down { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .stat-card .stat-change.neutral { color: var(--gold); background: rgba(255,215,0,0.1); }
+
+    /* ==================== PREMIUM CARD ==================== */
+    .premium-card {
+      background: linear-gradient(135deg, rgba(255,69,0,0.12), rgba(255,215,0,0.05));
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-md);
+      padding: 20px 25px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    .premium-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.05), transparent);
+      pointer-events: none;
+    }
+    .premium-card .coin-section { display: flex; align-items: center; gap: 15px; z-index: 1; }
+    .premium-card .coin-section .coin-icon { font-size: 2rem; color: var(--gold); }
+    .premium-card .coin-section .coins { font-family: var(--font-primary); font-size: 2rem; font-weight: 900; color: var(--gold); }
+    .premium-card .coin-section .coins-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; display: block; }
+
+    .premium-card .progress-section { flex: 1; min-width: 150px; z-index: 1; }
+    .premium-card .progress-section .progress-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+    .premium-card .progress-section .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--fire-orange), var(--gold)); border-radius: 4px; transition: width 1.5s ease; }
+    .premium-card .progress-section .progress-text { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-secondary); margin-top: 4px; }
+    .premium-card .progress-section .progress-text .highlight { color: var(--gold); }
+
+    .premium-card .btn-group { display: flex; gap: 8px; flex-wrap: wrap; z-index: 1; }
+    .premium-card .btn-sm {
+      font-family: var(--font-primary);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-medium);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .premium-card .btn-sm.earn { background: linear-gradient(135deg, var(--gold), #FFAA00); color: var(--black); }
+    .premium-card .btn-sm.earn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    .premium-card .btn-sm.premium { background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark)); color: var(--gold); }
+    .premium-card .btn-sm.premium:hover { transform: scale(1.05); box-shadow: var(--fire-glow); }
+    .premium-card .btn-sm.history { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-secondary); }
+    .premium-card .btn-sm.history:hover { border-color: var(--gold); color: var(--gold); }
+
+    .premium-card .tier-badge {
+      font-size: 0.55rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: rgba(255,215,0,0.15);
+      border: 1px solid rgba(255,215,0,0.3);
+      color: var(--gold);
+      z-index: 1;
+    }
+
+    /* ==================== QUICK ACTIONS ==================== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .section-header h2 { font-family: var(--font-primary); font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+    .section-header h2 i { color: var(--fire-orange); }
+    .section-header .view-all { color: var(--text-secondary); font-size: 0.7rem; text-decoration: none; transition: var(--transition-fast); cursor: pointer; }
+    .section-header .view-all:hover { color: var(--gold); }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    .action-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,69,0,0.12);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      text-align: center;
+      transition: var(--transition-medium);
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+    }
+    .action-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,69,0,0.05), transparent);
+      opacity: 0;
+      transition: var(--transition-medium);
+    }
+    .action-card:hover::before { opacity: 1; }
+    .action-card:hover { border-color: var(--fire-orange); transform: translateY(-3px); box-shadow: var(--fire-glow); }
+    .action-card i { font-size: 1.5rem; color: var(--fire-orange); margin-bottom: 5px; display: block; transition: var(--transition-fast); }
+    .action-card:hover i { transform: scale(1.1); }
+    .action-card h4 { font-size: 0.8rem; font-weight: 600; }
+    .action-card p { font-size: 0.6rem; color: var(--text-secondary); margin-top: 2px; }
+    .action-card .badge {
+      display: inline-block;
+      padding: 1px 10px;
+      border-radius: 20px;
+      font-size: 0.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 5px;
+      letter-spacing: 0.5px;
+    }
+    .badge-premium { background: linear-gradient(135deg, #FFD700, #FFAA00); color: var(--black); }
+    .badge-free { background: #333; color: var(--text-secondary); }
+    .badge-required { background: var(--fire-orange); color: var(--black); }
+    .badge-coming { background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.2); color: var(--gold); }
+    .badge-new { background: #25D366; color: var(--black); animation: pulseGlow 1.5s infinite; }
+
+    /* ==================== RECENT ACTIVITY ==================== */
+    .activity-list {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,69,0,0.12);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 25px;
+    }
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: var(--transition-fast);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item:hover { padding-left: 8px; }
+    .activity-item .activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,69,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fire-orange);
+      flex-shrink: 0;
+      transition: var(--transition-fast);
+    }
+    .activity-item:hover .activity-icon { background: rgba(255,69,0,0.2); transform: scale(1.05); }
+    .activity-item .activity-content { flex: 1; }
+    .activity-item .activity-content h4 { font-size: 0.8rem; font-weight: 600; }
+    .activity-item .activity-content p { font-size: 0.7rem; color: var(--text-secondary); }
+    .activity-item .activity-time { font-size: 0.6rem; color: var(--text-secondary); white-space: nowrap; }
+
+    /* ==================== ANNOUNCEMENT ==================== */
+    .announcement-box {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: var(--transition-medium);
+    }
+    .announcement-box:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
+    .announcement-box .icon { font-size: 1.3rem; color: var(--gold); animation: pulseGlow 2s infinite alternate; }
+    .announcement-box .text { flex: 1; }
+    .announcement-box .text h4 { font-family: var(--font-primary); font-size: 0.65rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+    .announcement-box .text p { font-size: 0.85rem; color: var(--text-secondary); }
+    .announcement-box .close-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; transition: var(--transition-fast); padding: 5px; }
+    .announcement-box .close-btn:hover { color: var(--fire-orange); transform: rotate(90deg); }
+
+    /* ==================== SERVER STATUS ==================== */
+    .server-status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      background: var(--glass-bg-light);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-sm);
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,69,0,0.08);
+    }
+    .server-status-grid .stat-mini {
+      text-align: center;
+      padding: 5px;
+    }
+    .server-status-grid .stat-mini .num { font-family: var(--font-primary); font-size: 1rem; font-weight: 700; color: var(--gold); }
+    .server-status-grid .stat-mini .label { font-size: 0.5rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ==================== TOAST ==================== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--fire-orange);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.4s ease;
+      max-width: 360px;
+    }
+    .toast.active { display: block; }
+    @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    .toast .toast-title { font-weight:700; color:var(--gold); font-size:0.8rem; }
+    .toast .toast-msg { font-size:0.7rem; color:var(--text-secondary); }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .premium-card { flex-direction: column; align-items: stretch; text-align: center; }
+      .premium-card .coin-section { justify-content: center; }
+      .premium-card .btn-group { justify-content: center; }
+      .actions-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .main-content { padding: 70px 12px 20px; }
+      .sidebar { width: 280px; left: -280px; }
+      .video-header video { height: 180px; }
+      .video-header .overlay-text h2 { font-size:1.2rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .actions-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .server-status-grid { grid-template-columns: repeat(3, 1fr); }
+      .welcome-card h2 { font-size:1.4rem; }
+      .welcome-card { padding:20px; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .actions-grid { grid-template-columns: 1fr 1fr; }
+      .video-header video { height: 140px; }
+      .server-status-grid { grid-template-columns: repeat(2, 1fr); }
+      .premium-card { padding: 15px; }
+      .welcome-card h2 { font-size:1.2rem; }
+    }
+
+    /* ==================== ANIMATIONS ==================== */
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes scaleIn { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+    @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+
+    .animate-fade-up { animation: fadeInUp 0.6s ease; }
+    .animate-scale { animation: scaleIn 0.5s ease; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== BACKGROUND ==================== -->
+<div class="bg-fire"></div>
+<div class="scanlines"></div>
+<div class="grid-overlay"></div>
+<canvas id="fireParticles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<div class="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X">
+    <span>SCORPION X</span>
+    <div class="version">v3.0.0</div>
+  </div>
+  <a href="/dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/connect.html"><i class="fab fa-whatsapp"></i> Connect WhatsApp <span class="badge-sidebar">+</span></a>
+  <a href="/ban.html"><i class="fas fa-skull"></i> Ban Panel <span class="badge-sidebar">🔥</span></a>
+  <a href="/unban.html"><i class="fas fa-infinity"></i> Unban Panel</a>
+  <a href="/earn-coins.html"><i class="fas fa-coins"></i> Earn Coins</a>
+  <a href="/reels.html"><i class="fas fa-photo-video"></i> Reels <span class="badge-sidebar">NEW</span></a>
+  <a href="/chat.html"><i class="fas fa-comments"></i> Chatroom</a>
+  <a href="/account.html"><i class="fas fa-user-cog"></i> Account</a>
+  <a href="/admin.html"><i class="fas fa-code-branch"></i> Admin <span class="badge-sidebar">🔒</span></a>
+  <div class="sidebar-divider"></div>
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  <div class="sidebar-footer">⚔ ZENTRIX TECH ⚔</div>
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content">
+
+  <!-- ==================== VIDEO HEADER ==================== -->
+  <div class="video-header animate-fade-up">
+    <video autoplay muted loop playsinline id="bgVideo">
+      <source src="https://files.catbox.moe/9djtp0.mp4" type="video/mp4">
+    </video>
+    <div class="top-right-badge">
+      <span class="dot green" id="statusDot"></span>
+      <span id="statusText">Online</span>
+    </div>
+    <div class="overlay-text">
+      <h2><span class="fire-icon">🔥</span> DASHBOARD</h2>
+      <div class="subtitle">Dominate the digital realm.</div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE HEADER ==================== -->
+  <div class="page-header">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+    <span id="pageHeaderBadge"></span>
+  </div>
+
+  <!-- ==================== SERVER STATUS ==================== -->
+  <div class="server-status-grid animate-fade-up">
+    <div class="stat-mini"><span class="num" id="onlineUsers">0</span><div class="label">Online Users</div></div>
+    <div class="stat-mini"><span class="num" id="totalBansToday">0</span><div class="label">Bans Today</div></div>
+    <div class="stat-mini"><span class="num" id="totalUnbansToday">0</span><div class="label">Unbans Today</div></div>
+    <div class="stat-mini"><span class="num" id="serverUptime">0h</span><div class="label">Server Uptime</div></div>
+    <div class="stat-mini"><span class="num" id="activeSessions">0</span><div class="label">Active Sessions</div></div>
+    <div class="stat-mini"><span class="num" id="totalCoinsToday">0</span><div class="label">Coins Earned</div></div>
+  </div>
+
+  <!-- ==================== WELCOME CARD ==================== -->
+  <div class="welcome-card animate-fade-up">
+    <h2>
+      <span class="greeting">👋 Welcome back, <span id="usernameDisplay">Warrior</span></span>
+      <span class="status-badge online" id="statusBadge">🟢 Online</span>
+    </h2>
+    <p>Your chaos dashboard is ready. Dominate the realm.</p>
+  </div>
+
+  <!-- ==================== ANNOUNCEMENT BOX ==================== -->
+  <div class="announcement-box animate-fade-up" id="announcementBox">
+    <div class="icon"><i class="fas fa-bullhorn"></i></div>
+    <div class="text">
+      <h4>📢 Announcement</h4>
+      <p id="announcementText">🔥 Welcome to SCORPION X! Connect your WhatsApp to start dominating.</p>
+    </div>
+    <button class="close-btn" onclick="closeAnnouncement()"><i class="fas fa-times"></i></button>
+  </div>
+
+  <!-- ==================== STATS GRID ==================== -->
+  <div class="stats-grid animate-fade-up">
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-coins"></i></span>
+      <div class="stat-number" id="coinCount">0</div>
+      <div class="stat-label">Coins</div>
+      <span class="stat-change up" id="coinChange">+0 today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-skull"></i></span>
+      <div class="stat-number" id="banCount">0</div>
+      <div class="stat-label">Bans</div>
+      <span class="stat-change up" id="banChange">+0 today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-infinity"></i></span>
+      <div class="stat-number" id="unbanCount">0</div>
+      <div class="stat-label">Unbans</div>
+      <span class="stat-change neutral" id="unbanChange">+0 today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-users"></i></span>
+      <div class="stat-number" id="referralCount">0</div>
+      <div class="stat-label">Referrals</div>
+      <span class="stat-change up" id="referralChange">+0 today</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-trophy"></i></span>
+      <div class="stat-number" id="achievementCount">0</div>
+      <div class="stat-label">Achievements</div>
+      <span class="stat-change up" id="achievementChange">+0 new</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon"><i class="fas fa-bolt"></i></span>
+      <div class="stat-number" id="streakCount">0</div>
+      <div class="stat-label">Day Streak</div>
+      <span class="stat-change neutral" id="streakChange">Keep going!</span>
+    </div>
+  </div>
+
+  <!-- ==================== PREMIUM CARD ==================== -->
+  <div class="premium-card animate-fade-up">
+    <div class="coin-section">
+      <div class="coin-icon"><i class="fas fa-coins"></i></div>
+      <div>
+        <span class="coins-label">Your Balance</span>
+        <div class="coins" id="coinBalance">0</div>
+      </div>
+    </div>
+
+    <div class="tier-badge" id="tierDisplay">LITE</div>
+
+    <div class="progress-section">
+      <div class="progress-bar">
+        <div class="fill" id="premiumProgress" style="width: 0%;"></div>
+      </div>
+      <div class="progress-text">
+        <span>0 coins</span>
+        <span id="premiumTarget">11,100 coins</span>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-sm earn" onclick="window.location.href='/earn-coins.html'"><i class="fas fa-coins"></i> Earn</button>
+      <button class="btn-sm premium" onclick="window.location.href='/earn-coins.html'"><i class="fas fa-crown"></i> Premium</button>
+      <button class="btn-sm history" onclick="showToast('📊 History','Coin history coming soon!')"><i class="fas fa-clock"></i></button>
+    </div>
+  </div>
+
+  <!-- ==================== QUICK ACTIONS ==================== -->
+  <div class="section-header">
+    <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+    <span class="view-all" onclick="showToast('🔍 All Actions','All actions available from sidebar')">View All <i class="fas fa-arrow-right"></i></span>
+  </div>
+
+  <div class="actions-grid animate-fade-up">
+    <a href="/connect.html" class="action-card">
+      <i class="fab fa-whatsapp"></i>
+      <h4>Connect Device</h4>
+      <p>Link WhatsApp</p>
+      <span class="badge badge-required">Required</span>
+    </a>
+    <a href="/ban.html" class="action-card">
+      <i class="fas fa-skull"></i>
+      <h4>Launch Ban</h4>
+      <p>Crash & dominate</p>
+      <span class="badge badge-free">Free</span>
+    </a>
+    <a href="/unban.html" class="action-card">
+      <i class="fas fa-infinity"></i>
+      <h4>Unban Request</h4>
+      <p>Restore access</p>
+      <span class="badge badge-free">Free</span>
+    </a>
+    <a href="/earn-coins.html" class="action-card">
+      <i class="fas fa-coins"></i>
+      <h4>Earn Coins</h4>
+      <p>Daily claim</p>
+      <span class="badge badge-premium">Bonus</span>
+    </a>
+    <a href="/reels.html" class="action-card">
+      <i class="fas fa-photo-video"></i>
+      <h4>Reels</h4>
+      <p>Watch & chill</p>
+      <span class="badge badge-new">New</span>
+    </a>
+    <a href="/chat.html" class="action-card">
+      <i class="fas fa-comments"></i>
+      <h4>Chatroom</h4>
+      <p>Connect with others</p>
+      <span class="badge badge-free">Free</span>
+    </a>
+    <a href="/account.html" class="action-card">
+      <i class="fas fa-user-cog"></i>
+      <h4>Account</h4>
+      <p>Manage profile</p>
+      <span class="badge badge-free">Free</span>
+    </a>
+    <a href="/admin.html" class="action-card">
+      <i class="fas fa-code-branch"></i>
+      <h4>Admin Panel</h4>
+      <p>Full control</p>
+      <span class="badge badge-required">Admin</span>
+    </a>
+  </div>
+
+  <!-- ==================== RECENT ACTIVITY ==================== -->
+  <div class="section-header">
+    <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+    <span class="view-all" onclick="showToast('📋 Activity','Full activity log coming soon!')">View All <i class="fas fa-arrow-right"></i></span>
+  </div>
+
+  <div class="activity-list animate-fade-up" id="activityList">
+    <div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:0.9rem;">
+      <i class="fas fa-spinner fa-spin"></i> Loading activity...
+    </div>
+  </div>
+
+  <!-- ==================== ACHIEVEMENTS ==================== -->
+  <div class="section-header">
+    <h2><i class="fas fa-trophy"></i> Achievements</h2>
+    <span class="view-all" onclick="showToast('🏆 Achievements','Full achievement system coming soon!')">View All <i class="fas fa-arrow-right"></i></span>
+  </div>
+
+  <div class="activity-list animate-fade-up" id="achievementList">
+    <div style="text-align:center; color:var(--text-secondary); padding:15px; font-size:0.8rem;">
+      <i class="fas fa-trophy" style="color:var(--gold); font-size:2rem; display:block; margin-bottom:10px;"></i>
+      No achievements yet. Start using SCORPION X to unlock them!
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">🔥 Dashboard</div>
+  <div class="toast-msg" id="toastMsg">Welcome to SCORPION X!</div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+  // ============================================================
+  // SCORPION X – ULTIMATE DASHBOARD JS
+  // ============================================================
+
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  if (!token) window.location.href = '/login.html';
+
+  // ==================== FIRE PARTICLES ====================
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 2.5 + 1.5,
+      speedX: (Math.random() - 0.5) * 1.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#FF4500','#FF6600','#FFD700','#FF0000','#FF8C00'][Math.floor(Math.random()*5)]
+    };
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const p = createParticle();
+    p.y = Math.random() * canvas.height;
+    particles.push(p);
+  }
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.opacity;
+      ctx.shadowColor = '#FF4500';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      if (p.y < -10) {
+        Object.assign(p, createParticle());
+        p.y = canvas.height + 10;
+      }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ==================== CURSOR GLOW ====================
+  const cursorGlow = document.getElementById('cursorGlow');
+  const cursorTrail = document.getElementById('cursorTrail');
+
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.classList.add('active');
+    clearTimeout(cursorTrail._timeout);
+    cursorTrail._timeout = setTimeout(() => cursorTrail.classList.remove('active'), 300);
+  });
+  if ('ontouchstart' in window) { cursorGlow.style.display = 'none'; cursorTrail.style.display = 'none'; }
+
+  // ==================== VIDEO AUTOPLAY ====================
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('bgVideo');
+    if (video) {
+      video.play().catch(function(e) {
+        document.addEventListener('click', function playOnClick() {
+          video.play().catch(() => {});
+          document.removeEventListener('click', playOnClick);
+        }, { once: true });
+      });
+    }
+  });
+
+  // ==================== SIDEBAR ====================
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // ==================== TOAST ====================
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 4000);
+  }
+
+  // ==================== API HELPER ====================
+  async function apiRequest(endpoint, method = 'GET', body = null) {
+    try {
+      const opts = {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(endpoint, opts);
+      const data = await res.json();
+      if (!data.success && (data.code === 'SESSION_EXPIRED' || data.code === 'TOKEN_EXPIRED' || data.code === 'NO_TOKEN')) {
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
+        showToast('⏳ Session Expired', 'Please login again.');
+        setTimeout(() => window.location.href = '/login.html', 1500);
+        throw new Error(data.message);
+      }
+      return data;
+    } catch (err) {
+      console.error('API error:', err);
+      throw err;
+    }
+  }
+
+  // ==================== LOGOUT ====================
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+
+  // ==================== LOAD DASHBOARD ====================
+  async function loadDashboard() {
+    try {
+      const data = await apiRequest('/api/user/dashboard');
+      if (data.success) {
+        const user = data.user;
+
+        // Update greeting
+        document.getElementById('usernameDisplay').textContent = user.username || 'Warrior';
+
+        // Update coins
+        const coins = user.coins || 0;
+        document.getElementById('coinCount').textContent = coins;
+        document.getElementById('coinBalance').textContent = coins;
+
+        // Update premium progress
+        const target = 11100;
+        const progress = Math.min((coins / target) * 100, 100);
+        document.getElementById('premiumProgress').style.width = progress + '%';
+        document.getElementById('premiumTarget').textContent = `${Math.max(target - coins, 0)} coins`;
+
+        // Update tier
+        const tierEl = document.getElementById('tierDisplay');
+        if (user.isPremium) {
+          tierEl.textContent = '🔥 PREMIUM';
+          tierEl.style.background = 'rgba(255,215,0,0.2)';
+          tierEl.style.border = '1px solid var(--gold)';
+          document.getElementById('pageHeaderBadge').innerHTML = `<span class="status-badge online" style="background:linear-gradient(135deg,#FFD700,#FFAA00); color:#000;">⭐ PREMIUM</span>`;
+        } else {
+          tierEl.textContent = '⚔ LITE';
+          tierEl.style.background = 'rgba(255,255,255,0.05)';
+          tierEl.style.border = '1px solid rgba(255,255,255,0.1)';
+          document.getElementById('pageHeaderBadge').innerHTML = `<span class="status-badge offline">LITE</span>`;
+        }
+
+        // Update stats
+        document.getElementById('banCount').textContent = user.stats?.totalBans || 0;
+        document.getElementById('unbanCount').textContent = user.stats?.totalUnbans || 0;
+        document.getElementById('referralCount').textContent = user.totalReferrals || 0;
+
+        // Update change indicators (mock)
+        document.getElementById('coinChange').textContent = `+${Math.floor(Math.random() * 20)} today`;
+        document.getElementById('banChange').textContent = `+${Math.floor(Math.random() * 5)} today`;
+        document.getElementById('unbanChange').textContent = `+${Math.floor(Math.random() * 3)} today`;
+        document.getElementById('referralChange').textContent = `+${Math.floor(Math.random() * 2)} today`;
+        document.getElementById('achievementChange').textContent = `${Math.floor(Math.random() * 2)} new`;
+
+        // Update server stats (mock)
+        document.getElementById('onlineUsers').textContent = Math.floor(Math.random() * 50) + 10;
+        document.getElementById('totalBansToday').textContent = Math.floor(Math.random() * 15) + 1;
+        document.getElementById('totalUnbansToday').textContent = Math.floor(Math.random() * 8) + 1;
+        document.getElementById('serverUptime').textContent = Math.floor(Math.random() * 24) + 'h';
+        document.getElementById('activeSessions').textContent = Math.floor(Math.random() * 30) + 5;
+        document.getElementById('totalCoinsToday').textContent = Math.floor(Math.random() * 500) + 100;
+
+        // Update announcement
+        if (data.announcement) {
+          document.getElementById('announcementText').textContent = data.announcement;
+        }
+
+        // Update activity feed
+        if (data.activities && data.activities.length) {
+          const container = document.getElementById('activityList');
+          container.innerHTML = data.activities.map(act => `
+            <div class="activity-item">
+              <div class="activity-icon"><i class="${act.icon}"></i></div>
+              <div class="activity-content">
+                <h4>${act.title}</h4>
+                <p>${act.description}</p>
+              </div>
+              <span class="activity-time">${act.time}</span>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('activityList').innerHTML = `
+            <div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:0.9rem;">
+              <i class="fas fa-inbox"></i> No recent activity
+            </div>
+          `;
+        }
+
+        // Update achievements
+        const achievements = [
+          { icon: 'fas fa-skull', name: 'First Blood', desc: 'Execute your first ban', locked: false },
+          { icon: 'fas fa-coins', name: 'Coin Collector', desc: 'Earn 500 coins', locked: coins < 500 },
+          { icon: 'fas fa-users', name: 'Social Butterfly', desc: 'Get 5 referrals', locked: (user.totalReferrals || 0) < 5 },
+          { icon: 'fas fa-fire', name: 'On Fire!', desc: '7-day streak', locked: true },
+        ];
+        document.getElementById('achievementCount').textContent = achievements.filter(a => !a.locked).length;
+
+        const container = document.getElementById('achievementList');
+        if (achievements.some(a => !a.locked)) {
+          container.innerHTML = achievements.filter(a => !a.locked).map(a => `
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(255,215,0,0.1); color:var(--gold);"><i class="${a.icon}"></i></div>
+              <div class="activity-content">
+                <h4>🏆 ${a.name}</h4>
+                <p>${a.desc}</p>
+              </div>
+              <span class="activity-time">✅ Unlocked</span>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `
+            <div style="text-align:center; color:var(--text-secondary); padding:15px; font-size:0.8rem;">
+              <i class="fas fa-trophy" style="color:var(--gold); font-size:2rem; display:block; margin-bottom:10px;"></i>
+              No achievements yet. Start using SCORPION X to unlock them!
+            </div>
+          `;
+        }
+
+        // Update status
+        document.getElementById('statusBadge').textContent = data.connected ? '🟢 Online' : '🔴 Offline';
+        document.getElementById('statusBadge').className = `status-badge ${data.connected ? 'online' : 'offline'}`;
+
+      } else {
+        if (data.message === 'Unauthorized') {
+          localStorage.removeItem('authToken');
+          sessionStorage.removeItem('authToken');
+          window.location.href = '/login.html';
+        }
+      }
+    } catch (err) {
+      console.error('Error loading dashboard:', err);
+    }
+  }
+
+  // ==================== WHATSAPP STATUS ====================
+  async function checkWhatsAppStatus() {
+    try {
+      const data = await apiRequest('/api/user/device-status');
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      if (data.connected) {
+        dot.className = 'dot green';
+        text.textContent = 'Connected';
+      } else {
+        dot.className = 'dot red';
+        text.textContent = 'Disconnected';
+      }
+      return data.connected;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  // ==================== ANNOUNCEMENT ====================
+  function closeAnnouncement() {
+    const box = document.getElementById('announcementBox');
+    if (box) box.style.display = 'none';
+  }
+
+  // ==================== AUTO-REFRESH ====================
+  setInterval(() => {
+    loadDashboard();
+    checkWhatsAppStatus();
+  }, 60000);
+
+  // ==================== INIT ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDashboard();
+    checkWhatsAppStatus();
+    setTimeout(() => showToast('🔥 Welcome to SCORPION X', 'Dominate the digital realm.'), 1500);
+  });
+
+  // ==================== KEYBOARD SHORTCUTS ====================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'r' && e.ctrlKey) { e.preventDefault(); loadDashboard(); showToast('🔄 Refreshed', 'Dashboard updated'); }
+  });
+
+  console.log('🔥 SCORPION X Ultimate Dashboard loaded!');
+</script>
+</body>
+</html>
