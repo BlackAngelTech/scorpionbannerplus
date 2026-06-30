@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SCORPION X | Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --black: #0a0a0a;
+      --fire-orange: #FF4500;
+      --fire-bright: #FF6600;
+      --fire-dark: #8B0000;
+      --gold: #FFD700;
+      --text-primary: #E9EDEF;
+      --text-secondary: #A8A8A8;
+      --glass-bg: rgba(10, 10, 10, 0.85);
+      --fire-glow: 0 0 30px rgba(255,69,0,0.3);
+      --fire-glow-strong: 0 0 60px rgba(255,69,0,0.6);
+      --font-primary: 'Orbitron', monospace;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+    body { background: var(--black); font-family: var(--font-body); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--fire-orange); border-radius: 10px; }
+
+    .bg-fire {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, #1a0505 0%, #0a0a0a 70%);
+    }
+    .bg-fire::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(0deg, rgba(255,69,0,0.08), transparent);
+      animation: firePulse 3s ease-in-out infinite;
+    }
+    .bg-fire::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,69,0,0.05), transparent);
+      animation: fireGlow 4s ease-in-out infinite;
+    }
+    @keyframes firePulse { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+    @keyframes fireGlow { 0%,100% { opacity:0.3; } 50% { opacity:0.8; } }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(255,69,0,0.02) 0px, rgba(255,69,0,0.02) 2px, transparent 2px, transparent 6px);
+    }
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,69,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,69,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    #fireParticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .cursor-glow {
+      position: fixed;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.2), rgba(255,215,0,0.05), transparent 70%);
+      pointer-events: none;
+      z-index: 999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+    }
+    .cursor-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,69,0,0.4), transparent);
+      pointer-events: none;
+      z-index: 998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s linear, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .cursor-trail.active { opacity: 1; }
+
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--glass-bg);
+      border: 1px solid var(--fire-orange);
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: blur(12px);
+      transition: 0.2s;
+      box-shadow: var(--fire-glow);
+    }
+    .hamburger:hover { background: var(--fire-orange); box-shadow: var(--fire-glow-strong); transform: scale(1.05); }
+    .hamburger span { width: 26px; height: 3px; background: var(--gold); transition: 0.2s; border-radius: 2px; }
+    .hamburger:hover span { background: var(--black); }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: rgba(5,10,20,0.98);
+      backdrop-filter: blur(24px);
+      border-right: 2px solid var(--fire-orange);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2,0.9,0.4,1.1);
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar .sidebar-logo {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+    .sidebar .sidebar-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--fire-orange);
+      margin-bottom: 6px;
+      box-shadow: var(--fire-glow);
+    }
+    .sidebar .sidebar-logo span {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      color: var(--gold);
+      display: block;
+      letter-spacing: 2px;
+    }
+    .sidebar .sidebar-logo .version {
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+    }
+    .sidebar .sidebar-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--fire-orange), transparent);
+      margin: 10px 20px;
+      opacity: 0.3;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 25px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,69,0,0.05);
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+    .sidebar a i { width: 28px; color: var(--fire-orange); font-size: 1.1rem; }
+    .sidebar a:hover { background: rgba(255,69,0,0.1); padding-left: 35px; color: #fff; }
+    .sidebar a.active { color: var(--gold); background: rgba(255,69,0,0.15); border-left: 3px solid var(--fire-orange); }
+    .sidebar .sidebar-footer {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+      opacity: 0.5;
+      padding: 10px;
+      letter-spacing: 1px;
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 10;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 20px 30px;
+    }
+
+    .video-header {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: var(--fire-glow-strong);
+      border: 1px solid rgba(255,69,0,0.3);
+      background: #0a0a0a;
+      min-height: 220px;
+    }
+    .video-header video {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      display: block;
+    }
+    .video-header .overlay-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 35px 30px 22px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+    }
+    .video-header .overlay-text h2 {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .video-header .overlay-text h2 .fire-icon { color: var(--fire-orange); animation: pulseGlow 2s infinite alternate; }
+    .video-header .overlay-text .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    }
+    .video-header .top-right-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,69,0,0.3);
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+    }
+    .top-right-badge .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: #25D366; animation: blink 1.5s infinite; }
+    .dot.red { background: var(--fire-orange); animation: blink 1.5s infinite; }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,69,0,0.15);
+      border-radius: 24px;
+      padding: 30px 35px;
+      margin-bottom: 20px;
+      transition: 0.3s;
+    }
+    .glass-card:hover { border-color: rgba(255,69,0,0.3); }
+    .glass-card .card-title {
+      font-family: var(--font-primary);
+      font-size: 0.9rem;
+      color: var(--gold);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .glass-card .card-title i { color: var(--fire-orange); }
+
+    .session-input {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,69,0,0.3);
+      padding: 14px 18px;
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      letter-spacing: 2px;
+      text-align: center;
+      transition: 0.2s;
+      margin-bottom: 16px;
+    }
+    .session-input:focus {
+      outline: none;
+      border-color: var(--fire-orange);
+      box-shadow: 0 0 20px rgba(255,69,0,0.2);
+    }
+    .session-input::placeholder {
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      letter-spacing: 1px;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    .btn-fire {
+      font-family: var(--font-primary);
+      padding: 14px 35px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      background: linear-gradient(135deg, var(--fire-orange), var(--fire-dark));
+      color: var(--gold);
+      box-shadow: var(--fire-glow);
+    }
+    .btn-fire:hover:not(:disabled) {
+      transform: scale(1.02);
+      box-shadow: var(--fire-glow-strong);
+    }
+    .btn-fire:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status-display {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
+    }
+    .status-display.success { display: block; color: #66ff66; background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.2); }
+    .status-display.error { display: block; color: #ff6666; background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); }
+    .status-display.info { display: block; color: var(--gold); background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.15); }
+    .status-display.connected { display: block; color: #25D366; background: rgba(37,211,102,0.1); border: 1px solid #25D366; }
+
+    .video-confirm {
+      display: none;
+      margin-top: 15px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,69,0,0.3);
+    }
+    .video-confirm.active { display: block; animation: fadeInUp 0.6s ease; }
+    .video-confirm video { width: 100%; height: 200px; object-fit: cover; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--fire-orange);
+      border-radius: 8px;
+      padding: 14px 20px;
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.4s ease;
+      max-width: 360px;
+    }
+    .toast.active { display: block; }
+    @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    .toast .toast-title { font-weight:700; color:var(--gold); font-size:0.8rem; }
+    .toast .toast-msg { font-size:0.7rem; color:var(--text-secondary); }
+
+    @media (max-width:768px) {
+      .main-content { padding:70px 12px 20px; }
+      .sidebar { width:280px; left:-280px; }
+      .glass-card { padding:20px 15px; }
+      .video-header video { height:180px; }
+      .video-header .overlay-text h2 { font-size:1.2rem; }
+    }
+    @media (max-width:480px) {
+      .btn-fire { font-size:0.85rem; padding:12px 20px; }
+      .session-input { font-size:0.85rem; letter-spacing:1px; }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-fire"></div>
+<div class="scanlines"></div>
+<div class="grid-overlay"></div>
+<canvas id="fireParticles"></canvas>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<div class="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="https://files.catbox.moe/cam98u.jpg" alt="SCORPION X">
+    <span>SCORPION X</span>
+    <div class="version">v3.0.0</div>
+  </div>
+  <a href="/dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+  <a href="/connect.html" class="active"><i class="fab fa-whatsapp"></i> Connect WhatsApp <span class="badge-sidebar">+</span></a>
+  <a href="/ban.html"><i class="fas fa-skull"></i> Ban Panel <span class="badge-sidebar">🔥</span></a>
+  <a href="/unban.html"><i class="fas fa-infinity"></i> Unban Panel</a>
+  <a href="/earn-coins.html"><i class="fas fa-coins"></i> Earn Coins</a>
+  <a href="/reels.html"><i class="fas fa-photo-video"></i> Reels <span class="badge-sidebar">NEW</span></a>
+  <a href="/chat.html"><i class="fas fa-comments"></i> Chatroom</a>
+  <a href="/account.html"><i class="fas fa-user-cog"></i> Account</a>
+  <a href="/admin.html"><i class="fas fa-code-branch"></i> Admin <span class="badge-sidebar">🔒</span></a>
+  <div class="sidebar-divider"></div>
+  <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  <div class="sidebar-footer">⚔ ZENTRIX TECH ⚔</div>
+</div>
+
+<div class="main-content">
+  <div class="video-header">
+    <video autoplay muted loop playsinline id="bgVideo">
+      <source src="https://files.catbox.moe/9djtp0.mp4" type="video/mp4">
+    </video>
+    <div class="top-right-badge">
+      <span class="dot red" id="statusDot"></span>
+      <span id="statusText">Disconnected</span>
+    </div>
+    <div class="overlay-text">
+      <h2><span class="fire-icon">📱</span> CONNECT WHATSAPP</h2>
+      <div class="subtitle">Link your device using your session ID.</div>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-title"><i class="fas fa-key"></i> Session ID</div>
+    <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:20px;">
+      Enter your session ID from the Telegram bot:
+      <br>
+      <span style="font-size:0.8rem; color:var(--text-secondary); opacity:0.7;">
+        🤖 <a href="https://t.me/corpionxcrasherv263_bot" target="_blank" style="color:var(--fire-orange);">@corpionxcrasherv263_bot</a>
+      </span>
+    </p>
+    <input type="text" class="session-input" id="sessionInput" placeholder="SCORPION_XXXXXXXXXX_XXXX" autocomplete="off">
+    <button class="btn-fire" id="connectBtn" onclick="connectSession()">
+      <i class="fas fa-link"></i> CONNECT
+    </button>
+    <div id="statusDisplay" class="status-display"></div>
+    <div class="video-confirm" id="videoConfirm">
+      <video id="confirmVideo" loop playsinline>
+        <source src="https://files.catbox.moe/om7rb1.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="card-title"><i class="fas fa-info-circle"></i> How to get your session ID</div>
+    <div style="text-align:center; font-size:0.85rem; color:var(--text-secondary);">
+      <p>1. Open the SCORPION X Telegram bot: <br>
+         <a href="https://t.me/corpionxcrasherv263_bot" target="_blank" style="color:var(--fire-orange);">🤖 @corpionxcrasherv263_bot</a></p>
+      <p>2. Send <span style="color:var(--gold); font-family:var(--font-primary);">/pair 447123456789</span></p>
+      <p>3. Copy the session ID and paste it above.</p>
+      <p style="margin-top:10px;">💀 <span style="color:var(--gold);">"GET OVER HERE!"</span></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">📱 Connect</div>
+  <div class="toast-msg" id="toastMsg">Connect your WhatsApp to start dominating.</div>
+</div>
+
+<script>
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  if (!token) window.location.href = '/login.html';
+
+  let isConnected = false;
+
+  // Fire particles (same as before, copy from previous)
+  const canvas = document.getElementById('fireParticles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCanvas);
+  function createParticle() {
+    return {
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      size: Math.random() * 3 + 1.5,
+      speedY: Math.random() * 2.5 + 1.5,
+      speedX: (Math.random() - 0.5) * 1.2,
+      opacity: Math.random() * 0.6 + 0.2,
+      color: ['#FF4500','#FF6600','#FFD700','#FF0000','#FF8C00'][Math.floor(Math.random()*5)]
+    };
+  }
+  for(let i=0;i<100;i++){const p=createParticle(); p.y=Math.random()*canvas.height; particles.push(p);}
+  function drawParticles() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let p of particles) {
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fillStyle=p.color; ctx.globalAlpha=p.opacity; ctx.shadowColor='#FF4500'; ctx.shadowBlur=8;
+      ctx.fill(); ctx.shadowBlur=0; ctx.globalAlpha=1;
+      p.y-=p.speedY; p.x+=p.speedX;
+      if(p.y<-10){ Object.assign(p, createParticle()); p.y=canvas.height+10; }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  const cursorGlow = document.getElementById('cursorGlow');
+  const cursorTrail = document.getElementById('cursorTrail');
+  document.addEventListener('mousemove', (e) => {
+    cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    cursorTrail.classList.add('active');
+    clearTimeout(cursorTrail._timeout);
+    cursorTrail._timeout = setTimeout(() => cursorTrail.classList.remove('active'), 300);
+  });
+  if ('ontouchstart' in window) { cursorGlow.style.display = 'none'; cursorTrail.style.display = 'none'; }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('bgVideo');
+    if (video) {
+      video.play().catch(function(e) {
+        document.addEventListener('click', function playOnClick() {
+          video.play().catch(() => {});
+          document.removeEventListener('click', playOnClick);
+        }, { once: true });
+      });
+    }
+  });
+
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+  document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 4000);
+  }
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('statusDisplay');
+    el.textContent = msg;
+    el.className = 'status-display ' + type;
+    el.style.display = 'block';
+  }
+  function clearStatus() {
+    const el = document.getElementById('statusDisplay');
+    el.style.display = 'none';
+    el.className = 'status-display';
+  }
+
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
+    window.location.href = '/login.html';
+  }
+
+  async function connectSession() {
+    const sessionId = document.getElementById('sessionInput').value.trim();
+    const btn = document.getElementById('connectBtn');
+    const videoConfirm = document.getElementById('videoConfirm');
+
+    if (!sessionId) {
+      setStatus('❌ Please enter your session ID.', 'error');
+      return;
+    }
+    if (!sessionId.startsWith('SCORPION_')) {
+      setStatus('❌ Invalid session ID format. It should start with SCORPION_', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VALIDATING...';
+    setStatus('⏳ Validating session...', 'info');
+
+    try {
+      const res = await fetch('/api/validate-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ sessionId })
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        setStatus(`❌ ${data.message || 'Session invalid'}`, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-link"></i> CONNECT';
+        return;
+      }
+
+      if (data.connected) {
+        setStatus(`✅ Already connected! Phone: ${data.phoneNumber}`, 'connected');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> CONNECTED';
+        showToast('✅ Already Connected', 'Your WhatsApp is already linked.');
+        return;
+      }
+
+      setStatus('⏳ Connecting to WhatsApp... This may take a moment.', 'info');
+
+      const connectRes = await fetch('/api/connect-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ sessionId })
+      });
+      const connectData = await connectRes.json();
+
+      if (connectData.success) {
+        setStatus(`✅ Connected! Phone: ${connectData.phoneNumber}`, 'connected');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> CONNECTED';
+        videoConfirm.classList.add('active');
+        const v = document.getElementById('confirmVideo');
+        v.play().catch(() => {});
+        showToast('✅ WhatsApp Connected!', 'Your device is now linked to SCORPION X.');
+      } else {
+        setStatus(`❌ ${connectData.message || 'Connection failed'}`, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-link"></i> CONNECT';
+      }
+    } catch (err) {
+      console.error('Connection error:', err);
+      setStatus('❌ Server error. Please try again.', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-link"></i> CONNECT';
+    }
+  }
+
+  document.getElementById('sessionInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); connectSession(); }
+  });
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('/api/user/device-status', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.connected) {
+        setStatus(`✅ Already connected! Phone: ${data.phoneNumber || ''}`, 'connected');
+        document.getElementById('connectBtn').disabled = true;
+        document.getElementById('connectBtn').innerHTML = '<i class="fas fa-check-circle"></i> CONNECTED';
+        showToast('✅ Already Connected', 'Your WhatsApp is already linked.');
+      }
+    } catch (err) {}
+  });
+</script>
+</body>
+</html>
